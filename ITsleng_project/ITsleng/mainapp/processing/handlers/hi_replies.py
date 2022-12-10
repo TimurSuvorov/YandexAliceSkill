@@ -1,6 +1,6 @@
 import random
 from pprint import pprint
-from .extract_json import get_db_sentences
+from mainapp.processing.extract_json import get_db_sentences
 
 def hi_replies():
     sentences = get_db_sentences()
