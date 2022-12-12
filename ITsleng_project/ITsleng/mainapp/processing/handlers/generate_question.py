@@ -1,4 +1,6 @@
 import random
+from pprint import pprint
+
 from mainapp.processing.extract_json import get_db_sentences
 
 
@@ -10,4 +12,4 @@ def generate_question() -> dict:
 
 if __name__ == '__main__':
     f = generate_question()
-    print(f)
+    pprint(f, sort_dicts=False)

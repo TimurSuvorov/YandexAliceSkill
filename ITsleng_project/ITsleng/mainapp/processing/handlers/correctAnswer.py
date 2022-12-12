@@ -1,6 +1,6 @@
 import random
 from ..extract_json import get_db_sentences
-from .generate_var_buttons import generate_var_buttons
+from .generate_variants_objects import generate_var_buttons
 
 
 def correctanswer(question_dict):
@@ -22,7 +22,7 @@ def correctanswer(question_dict):
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
     return {
         "response": response,
-        "sessionstate": {
+        "session_state": {
             "question_dict": question_dict,
             "attempt": 1
         }

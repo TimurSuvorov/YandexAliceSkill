@@ -2,7 +2,7 @@ import random
 
 from mainapp.processing.extract_json import get_db_sentences
 from .generate_question import generate_question
-from .generate_var_buttons import generate_var_buttons
+from .generate_variants_objects import generate_var_buttons
 
 
 def incorrectanswer(session_state: dict):
@@ -39,7 +39,7 @@ def incorrectanswer(session_state: dict):
         # Генерируем кнопки для нового вопроса
         question_variants = question_dict["variants"]
         response: dict = {
-                'text': f'{badsentence}: {answer}. Следующий вопрос: {question_body}',
+                'text': f'{badsentence}: {answer.capitalize()}. Следующий вопрос: {question_body}',
                 'tts': f'{badsentence}: {answer}. Следующий вопрос: {question_body}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
@@ -47,7 +47,7 @@ def incorrectanswer(session_state: dict):
 
     return {
         "response": response,
-        "sessionstate": {
+        "session_state": {
             "question_dict": question_dict,
             "attempt": attempt
         }

@@ -1,4 +1,4 @@
-from .generate_var_buttons import generate_var_buttons
+from .generate_variants_objects import generate_var_buttons
 
 def next_question(question_dict: dict) -> dict:
 
@@ -16,7 +16,7 @@ def next_question(question_dict: dict) -> dict:
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
     return {
         "response": response,
-        "sessionstate": {
+        "session_state": {
             "question_dict": question_dict,
             "attempt": 1
             }
