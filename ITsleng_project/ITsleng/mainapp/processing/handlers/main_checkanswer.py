@@ -2,7 +2,7 @@ from .generate_question import generate_question
 from .next_question import next_question
 from .iscorrectAnswer import iscorrectanswer
 from .correctAnswer import correctanswer
-from .incorrectAnswer import incorrectanswer
+from .wrongAnswer import incorrectanswer
 
 '''
 {'question_dict': {'answers': ['таска'],
@@ -32,7 +32,7 @@ def checkanswer(command, session_state: dict):
         return response_dict
     else:
         # В случае неверного ответа нам нужен заданный вопрос из session_state
-        response_dict = incorrectanswer(session_state)
+        response_dict = incorrectanswer(command, session_state)
         return response_dict
 
 

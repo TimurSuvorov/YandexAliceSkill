@@ -2,13 +2,17 @@ import json
 import random
 import os
 
-from mainapp.processing.extract_json import get_db_sentences
+from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
 
 
 def hi_replies() -> dict:
-    sentences = get_db_sentences()
     # Случайный выбор фразы приветствия
+    sentences = get_db_sentences()
     hi_text = sentences["HIsentence"]
+
+    # Выбираем звуки
+    sounds = get_db_sounds()
+    startsound = random.choice(sounds["START"])
 
     response: dict = {
             'text': hi_text,
@@ -16,10 +20,10 @@ def hi_replies() -> dict:
                 {'title': 'Правила', 'hide': 'true'},
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
             ],
-            'tts': hi_text,
+            'tts': f'{startsound}{hi_text}',
             'end_session': 'false'
     }
-    sessionstate = {'service': 1}
+    sessionstate = {'service': 11}
     return {
         "response": response,
         "session_state": sessionstate
@@ -30,9 +34,13 @@ def bye_replies(session_state):
     sentences = get_db_sentences()
     bye_text = random.choice(sentences["BYEsentence"])
 
+    # Выбираем звуки
+    sounds = get_db_sounds()
+    byesound = random.choice(sounds["BYE"])
+
     response: dict = {
             'text': bye_text,
-            'tts': bye_text,
+            'tts': f'{bye_text} {byesound}',
             'end_session': 'True'
     }
 
@@ -46,14 +54,15 @@ def bye_replies(session_state):
 def rules_replies(session_state) -> dict:
 
     sentences = get_db_sentences()
-    rules_text = sentences["RULES"]
+    rules_text = sentences["RULES"]["text"]
+    rules_tts = sentences["RULES"]["tts"]
 
     response: dict = {
             'text': rules_text,
             'buttons': [
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
             ],
-            'tts': rules_text,
+            'tts': rules_tts,
             'end_session': 'false'
     }
 
@@ -64,7 +73,7 @@ def rules_replies(session_state) -> dict:
             'variants': [],
             'category': []
         },
-        "yesno_answertype": 1,
+        "yesno_type": 10,
         "service": 11
     }
 
@@ -94,7 +103,7 @@ def about_replies(session_state) -> dict:
             'variants': [],
             'category': []
         },
-        "yesno_answertype": 1,
+        "yesno_type": 10,
         "service": 11
     }
 

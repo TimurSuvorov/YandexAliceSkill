@@ -1,0 +1,26 @@
+{
+  "START": [
+    "<speaker audio='alice-music-drum-loop-1.opus'>"
+  ],
+  "NEXTQUEST": [
+    "<speaker audio='alice-sounds-game-boot-1.opus'>",
+    "<speaker audio='alice-sounds-game-ping-1.opus'>",
+    "<speaker audio='alice-sounds-game-powerup-1.opus'>",
+    "<speaker audio='alice-music-gong-1.opus'>"
+  ],
+  "CORRECT": [
+    "<speaker audio='alice-sounds-human-crowd-3.opus'>",
+    "<speaker audio='alice-sounds-human-cheer-1.opus'>",
+    "<speaker audio='alice-sounds-game-win-1.opus'>",
+    "<speaker audio='alice-sounds-game-win-2.opus'>"
+  ],
+  "WRONG": [
+    "<speaker audio='alice-sounds-human-laugh-3.opus'>",
+    "<speaker audio='alice-music-drums-2.opus'>",
+    "<speaker audio='alice-music-violin-c-1.opus'>",
+    "<speaker audio='alice-music-violin-b-1.opus'>"
+  ],
+  "BYE": [
+    "<speaker audio='alice-sounds-things-door-1.opus'>"
+  ]
+}
