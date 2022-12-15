@@ -13,8 +13,8 @@ from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп"]
 exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу"]
 rules = ["правила", "помощь"]
-about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь?"]
-dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос"]
+about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь"]
+dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал"]
 
 
@@ -23,6 +23,8 @@ repeat = ["повтор", "не понял", "ещё раз", "не расслы
 def anchorhandler(event):
     event: dict = rapidjson.load(event)
     command = event['request']['command']
+    sessionuser_id = event['session']['user']['user_id']
+    print(sessionuser_id)
     session_state = event['state']['session']
 
     # Обработка нового входа

@@ -7,7 +7,7 @@ from .correctAnswer import correctanswer
 from .stupid_replies import stupid_replies
 from .wrongAnswer import incorrectanswer
 
-stupid_answers = ["да+", "да у.", "ништяк", "нет", "ой", "блин", "жопа"]
+stupid_answers = ["да+", "да у.", "ништяк", "нет", "ой", "блин", "жопа", "ерунда", "упс"]
 
 
 '''
