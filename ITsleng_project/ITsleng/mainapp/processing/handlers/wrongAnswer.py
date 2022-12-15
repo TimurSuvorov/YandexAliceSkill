@@ -23,16 +23,17 @@ def incorrectanswer(command, session_state: dict):
         question_dict = session_state["question_dict"]
         # Генерируем кнопки
         question_variants = question_dict["variants"]
+
         # Удаляем из вариантов, если был назван оттуда. Подставляем другу фразу
         if command in question_variants:
             question_variants.remove(command)
             postsentence = random.choice(["Остались варианты", "Вот что осталось"])
 
-
+        variants = generate_var_string(question_variants)
 
         response: dict = {
-                'text': f'{mistakesentence}.\n{postsentence}:\n{generate_var_string(question_variants)}',
-                'tts': f'{wrongsound}{mistakesentence}.sil <[50]>{postsentence}:sil <[50]> {generate_var_string(question_variants)}',
+                'text': f'{mistakesentence} \n{postsentence}:\n{variants.replace("+", "")}',
+                'tts': f'{wrongsound}{mistakesentence}.sil <[50]>{postsentence}:sil <[50]> {variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
         }
@@ -41,8 +42,9 @@ def incorrectanswer(command, session_state: dict):
         # Если попыток угадать больше нет. Выбираем случайным образом предложение поругать
         badsentence = random.choice(sentences["BADsentence"])
         postsentence = random.choice(sentences["POSTsentence"])
-        # Получаем первый из списка правильный ответ
+        # Получаем первый из списка правильный ответ и объяснение
         answer = session_state["question_dict"]["answers"][0]
+        question_explanation = session_state["question_dict"]["explanation"]
         # Генерируем сразу новый вопрос и восстанавливаем количество попыток к нему
         question_dict = generate_question()
         attempt = 1
@@ -50,9 +52,11 @@ def incorrectanswer(command, session_state: dict):
         question_body = question_dict["sentence"]
         # Генерируем кнопки для нового вопроса
         question_variants = question_dict["variants"]
+        variants = generate_var_string(question_variants)
+
         response: dict = {
-                'text': f'{badsentence}: {answer.capitalize()}.\nСледующий вопрос: {question_body}.\n{postsentence}:\n{generate_var_string(question_variants)}',
-                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[50]> Следующий вопрос: sil <[50]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{generate_var_string(question_variants)}',
+                'text': f'{badsentence}: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \nДальше: {question_body} \n{postsentence}:\n{variants.replace("+", "")}',
+                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[70]> Дальше: sil <[50]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
         }

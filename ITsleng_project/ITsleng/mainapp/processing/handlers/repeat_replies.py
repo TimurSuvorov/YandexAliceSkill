@@ -12,8 +12,8 @@ def repeat_replies(session_state: dict) -> dict:
     # Если пустой по каким-либо причинам, Алиса прикинится валенком
     if not session_state.get("question_dict"):
         response: dict = {
-            'text': f'Ой, а я уже забыла. ¯\_(ツ)_/¯ . Давай я лучше загадаюю тебе слово?',
-            'tts': f'Ой, а я уже забыла. Давай начнём сначала',
+            'text': f'Ой, а я уже забыла. ¯\_(ツ)_/¯ . Давай я лучше загадаю тебе слово?',
+            'tts': f'Ой, а я уже забыла. Давай я лучше загадаю тебе слово?',
             'buttons': [{'title': 'Дальше', 'hide': 'true'}],
             'end_session': 'False'
         }
@@ -22,11 +22,12 @@ def repeat_replies(session_state: dict) -> dict:
         question_dict = session_state["question_dict"]
         question_body = question_dict["sentence"]
         question_variants: list = question_dict["variants"]
-        # Проверяем признак того, что перед нами вопрос с вариантами ответов
+        variants = generate_var_string(question_variants)
+        # Проверяем признак того, что перед нами вопрос с вариантами ответов, а не сервисное
         if len(question_variants) > 0:
             response: dict = {
-                'text': f'{question_body}.\n{postsentence}:\n {generate_var_string(question_variants)}',
-                'tts': f'Конечно!sil <[50]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{generate_var_string(question_variants)}',
+                'text': f'{question_body}.\n{postsentence}:\n {variants.replace("+", "")}',
+                'tts': f'Конечно!sil <[50]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
             }

@@ -17,10 +17,11 @@ def next_question(question_dict: dict) -> dict:
     # Выбираем звуки
     sounds = get_db_sounds()
     nextquestsound = random.choice(sounds["NEXTQUEST"])
+    variants = generate_var_string(question_variants)
 
     response: dict = {
-            'text': f'{question_body}.\n{postsentence}:\n{generate_var_string(question_variants)}',
-            'tts': f'{nextquestsound}sil <[5]>{tts_prompt_sound(question_body)}sil <[50]>{postsentence}sil <[70]>{generate_var_string(question_variants)}',
+            'text': f'{question_body}\n{postsentence}:\n{variants.replace("+", "")}',
+            'tts': f'{nextquestsound}sil <[5]>{tts_prompt_sound(question_body)}sil <[50]>{postsentence}sil <[70]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }

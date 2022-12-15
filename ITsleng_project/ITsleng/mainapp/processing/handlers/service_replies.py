@@ -6,7 +6,7 @@ from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
 
 
 def hi_replies() -> dict:
-    # Случайный выбор фразы приветствия
+    # Фраза приветствия
     sentences = get_db_sentences()
     hi_text = sentences["HIsentence"]
 
@@ -15,7 +15,7 @@ def hi_replies() -> dict:
     startsound = random.choice(sounds["START"])
 
     response: dict = {
-            'text': hi_text,
+            'text': hi_text.replace(" - ", "").replace("+", ""),
             'buttons': [
                 {'title': 'Правила', 'hide': 'true'},
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
@@ -51,31 +51,29 @@ def bye_replies(session_state):
     }
 
 
-def rules_replies(session_state) -> dict:
-
+def rules_replies(session_state: dict) -> dict:
     sentences = get_db_sentences()
     rules_text = sentences["RULES"]["text"]
-    rules_tts = sentences["RULES"]["tts"]
+    # Если функция вызвана во время вопроса, когда присутствует session_state["question_dict"]["answers"]
+    if session_state.get('question_dict', {}).get('answers'):
+        rules_text += 'Прод+олжим?'
+    else:
+        rules_text += 'Ну чт+о, начин+аем?'
 
     response: dict = {
-            'text': rules_text,
+            'text': rules_text.replace(" - ", "").replace("+", ""),
             'buttons': [
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
             ],
-            'tts': rules_tts,
+            'tts': rules_text,
             'end_session': 'false'
     }
 
-    sessionstate = {
-        "question_dict": {
-            'sentence': rules_text,
-            'answers': [],
-            'variants': [],
-            'category': []
-        },
-        "yesno_type": 10,
-        "service": 11
-    }
+    # Состояние с предыдущем ответом передаем прозрачно, но добавляем сервисный флаг
+    sessionstate = session_state
+    sessionstate["yesno_type"] = 10
+    sessionstate["service"] = 11
+    print('rules:', sessionstate)
 
     return {
         "response": response,
@@ -87,8 +85,14 @@ def about_replies(session_state) -> dict:
     sentences = get_db_sentences()
     about_text = sentences["ABOUT"]
 
+    # Если функция вызвана во время вопроса, когда присутствует session_state["question_dict"]["answers"]
+    if session_state.get('question_dict', {}).get('answers'):
+        about_text += 'Прод+олжим?'
+    else:
+        about_text += 'Начин+аем?'
+
     response: dict = {
-            'text': about_text,
+            'text': about_text.replace(" - ", "").replace("+", ""),
             'buttons': [
                 {'title': 'Правила', 'hide': 'true'}
             ],
@@ -96,16 +100,10 @@ def about_replies(session_state) -> dict:
             'end_session': 'false'
     }
 
-    sessionstate = {
-        "question_dict": {
-            'sentence': about_text,
-            'answers': [],
-            'variants': [],
-            'category': []
-        },
-        "yesno_type": 10,
-        "service": 11
-    }
+    # Состояние с предыдущем ответом передаем прозрачно, но добавляем сервисный флаг
+    sessionstate = session_state
+    sessionstate["yesno_type"] = 10
+    sessionstate["service"] = 11
 
     return {
         "response": response,

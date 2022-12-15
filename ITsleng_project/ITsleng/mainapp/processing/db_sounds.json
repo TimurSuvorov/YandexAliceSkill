@@ -15,7 +15,6 @@
     "<speaker audio='alice-sounds-game-win-2.opus'>"
   ],
   "WRONG": [
-    "<speaker audio='alice-sounds-human-laugh-3.opus'>",
     "<speaker audio='alice-music-drums-2.opus'>",
     "<speaker audio='alice-music-violin-c-1.opus'>",
     "<speaker audio='alice-music-violin-b-1.opus'>"

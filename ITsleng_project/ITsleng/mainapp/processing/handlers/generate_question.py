@@ -7,6 +7,7 @@ from mainapp.processing.extract_json import get_db_sentences
 def generate_question() -> dict:
     sentences = get_db_sentences()
     question_dict = random.choice(sentences["QA"])
+    #!!! Сразу генерировать с attemp = 1
     return question_dict
 
 

@@ -5,14 +5,15 @@ def generate_var_buttons(question_variants) -> list:
     buttons_list = []
 
     for var in question_variants:
-        buttons_list.append({'title': f'⚡{var.capitalize()}', 'hide': 'true'})
+        buttons_list.append({'title': f'⚡{var.capitalize().replace("+", "")}', 'hide': 'true'})
         random.shuffle(buttons_list)
     buttons_list.append({'title': "🤔Сдаюсь!", 'hide': 'true'})
     return buttons_list
 
 
 def generate_var_string(question_variants: list) -> str:
-    buttons_str = "•   " + "\n•   ".join(question_variants).title()
+    random.shuffle(question_variants)
+    buttons_str = "•   " + "\n•   ".join(question_variants)
     return buttons_str
 
 if __name__ == '__main__':

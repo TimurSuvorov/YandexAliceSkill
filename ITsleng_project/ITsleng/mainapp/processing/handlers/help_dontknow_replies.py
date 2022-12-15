@@ -25,8 +25,9 @@ def dontknow(session_state):
     else:
         sentences = get_db_sentences()
         postsentence = random.choice(sentences["POSTsentence"])
-        # Получаем первый из списка правильный ответ
+        # Получаем первый из списка правильный ответ и его объяснение
         answer = session_state["question_dict"]["answers"][0]
+        question_explanation = session_state["question_dict"]["explanation"]
         # Генерируем сразу новый вопрос и восстанавливаем количество попыток к нему
         question_dict = generate_question()
         # Из вопроса-словаря берем сам вопрос для подстановки в ответ
@@ -36,12 +37,12 @@ def dontknow(session_state):
 
         sounds = get_db_sounds()
         wrongsound = random.choice(sounds["WRONG"])
-        badsentence = random.choice(["Ну ничего", "Не переживай"])
-
+        noworrysentence = random.choice(["Ну ничего", "Не переживай", "Тогда слушай"])
+        variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'{badsentence}.\nПравильный ответ: {answer.capitalize()}.\nСледующий вопрос. {question_body}.\n{postsentence}:\n{generate_var_string(question_variants)}',
-            'tts': f'{wrongsound}sil <[5]>{badsentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> Следующий вопрос. sil <[50]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {generate_var_string(question_variants)}',
+            'text': f'{noworrysentence}.\nПравильный ответ: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \nПоехали дальше. {question_body}\n{postsentence}:\n{variants.replace("+", "")}',
+            'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[70]> Поехали дальше. sil <[50]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }

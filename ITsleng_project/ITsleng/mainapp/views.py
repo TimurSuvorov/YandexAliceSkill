@@ -8,17 +8,14 @@ from mainapp.processing.handlers.service_replies import hi_replies, bye_replies,
 from mainapp.processing.handlers.help_dontknow_replies import dontknow
 from mainapp.processing.handlers.main_checkanswer import checkanswer
 from mainapp.processing.handlers.repeat_replies import repeat_replies
-
+from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп"]
-exit_hard = ["закончим", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти"]
+exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу"]
 rules = ["правила", "помощь"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь?"]
-dont_know = ["не знаю", "дальше", "сдаюсь", "ответ"]
+dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал"]
-
-yes_ = ["да$", "давай", "хорошо"]
-no_ = ["нет", "не хочу"]
 
 
 
@@ -33,7 +30,6 @@ def anchorhandler(event):
         response_dict = hi_replies()
     elif not session_state.get("question_dict") and re.search("|".join(exit_light), command):
         response_dict = bye_replies(session_state)
-
     # Обработка запроса повторения
     elif re.search("|".join(repeat), command):
         response_dict = repeat_replies(session_state)
@@ -45,10 +41,14 @@ def anchorhandler(event):
         response_dict = rules_replies(session_state)
     elif re.search("|".join(about), command):
         response_dict = about_replies(session_state)
+    # Обработка запрос с мнимыми ответами Да/Нет
+    elif session_state.get("yesno_type"):
+        response_dict = yes_no_cont_replies(command, session_state)
     # Обработка требования выхода
     elif re.search("|".join(exit_hard), command):
         response_dict = bye_replies(session_state)
     else:
+        # Здесь должен остаться только вариант с вопросом внутри - его обрабатываем дальше
         response_dict = checkanswer(command, session_state)
 
 
