@@ -16,7 +16,8 @@ def correctanswer(question_dict, command, session_state):
     if rightanswer != command:  # FIXIT check by regex
         nicesentence = random.choice(["Пишется по-другому, но я поняла. Верно!",
                                       "Нечетко говоришь, но, похоже, ты прав!",
-                                      "Было непросто понять твои слова, но ты прав!"
+                                      "Было непросто понять твои слова, но ты прав!",
+                                      "Я тебя поняла!"
                                       ]
                                      )
 

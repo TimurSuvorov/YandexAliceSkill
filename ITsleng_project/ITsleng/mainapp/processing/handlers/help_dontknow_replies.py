@@ -70,7 +70,7 @@ def dontknow(command, session_state):
         variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'{noworrysentence}\nПравильный ответ: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}. ✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'{noworrysentence}\nПравильный ответ: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
             'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

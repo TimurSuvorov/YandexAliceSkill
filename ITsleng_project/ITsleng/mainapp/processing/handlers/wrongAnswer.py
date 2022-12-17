@@ -29,7 +29,7 @@ def incorrectanswer(command, session_state: dict):
 
         # Удаляем из вариантов, если был назван оттуда. Подставляем другу фразу
         for variant in question_variants:
-            if re.search(variant, command):
+            if re.search(variant.replace("+", ""), command):
                 question_variants.remove(variant)
                 postsentence = random.choice(["Остались варианты",
                                               "Вот что осталось",
@@ -39,7 +39,7 @@ def incorrectanswer(command, session_state: dict):
         variants = generate_var_string(question_variants)
 
         response: dict = {
-                'text': f'{mistakesentence} \n{postsentence}:\n{variants.replace("+", "")}',
+                'text': f'{mistakesentence}\n{postsentence}:\n{variants.replace("+", "")}',
                 'tts': f'{wrongsound}{mistakesentence}.sil <[50]>{postsentence}:sil <[50]> {variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
@@ -75,7 +75,7 @@ def incorrectanswer(command, session_state: dict):
         variants = generate_var_string(question_variants)
 
         response: dict = {
-                'text': f'{badsentence}: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}: ✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
+                'text': f'{badsentence}: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
                 'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letnext}: sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'

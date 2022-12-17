@@ -6,7 +6,7 @@ from mainapp.processing.handlers.generate_question import generate_question, tts
 from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
 from mainapp.processing.handlers.service_replies import bye_replies
 
-yes_answer = ["да$", "^давай", "хорошо", "я не против", "начнём", "продолж", "начать"]
+yes_answer = ["да$", "^давай", "хорошо", "я не против", "начнём", "продолж", "начать", "^ok$", "^ок$"]
 no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем"]
 
 def yes_no_cont_replies(command, session_state):
@@ -31,24 +31,24 @@ def yes_no_cont_replies(command, session_state):
             question_body = question_dict["sentence"]
             question_variants = question_dict["variants"]
             variants = generate_var_string(question_variants)
-            print("From yesno")
-            analytics = {
-                "events": [
-                    {
-                        "name": "Новый вопрос",
-                        "value": {
-                            "Вопрос": question_body.replace(" - ", "").replace("+", ""),
-                        }
-                    },
-                ]
-            }
-
 
         response: dict = {
             'text': f'Прекрасно! ✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
             'tts': f'Прекрасно! sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
+        }
+
+        print("From yesno")
+        analytics = {
+            "events": [
+                {
+                    "name": "Новый вопрос",
+                    "value": {
+                        "Вопрос": question_body.replace(" - ", "").replace("+", ""),
+                    }
+                },
+            ]
         }
 
         sessionstate = {
