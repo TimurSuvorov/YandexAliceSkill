@@ -7,7 +7,7 @@ from .correctAnswer import correctanswer
 from .stupid_replies import stupid_replies
 from .wrongAnswer import incorrectanswer
 
-stupid_answers = ["да+", "да у.", "ништяк", "нет", "ой", "блин", "жопа", "ерунда", "упс"]
+stupid_answers = ["^да+", "да уж", "ништяк", "^нет", "^ой", "блин", "жопа", "ерунда", "^упс"]
 
 
 '''
@@ -31,7 +31,6 @@ def checkanswer(command, session_state: dict):
         return response_dict
     # Проверка на явно тупые ответы
     elif re.search("|".join(stupid_answers), command):
-        print("stupid_answers")
         # Берем ранее озвученный вопрос и добавляем фразу
         response_dict = stupid_replies(command, session_state)
         return response_dict

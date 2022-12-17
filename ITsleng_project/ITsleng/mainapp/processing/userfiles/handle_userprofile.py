@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import time
 from pprint import pprint
 
 
@@ -22,13 +23,13 @@ def create_default_profile(user_id, session_id, time_st=datetime.datetime.utcnow
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     full_file_path = os.path.join(cur_dir, f'{user_id}.json')
     # запись данных JSON в файл
-    with open(full_file_path, "w") as new_profile:
+    with open(full_file_path, "w", encoding="utf-8") as new_profile:
         new_profile.write(default_content_json)
         print(f'Created new profile {user_id[-10:]}')
     return full_file_path
 
 
-def add_new_session(user_id, session_id, time_st=datetime.datetime.utcnow()):
+def add_new_session(user_id, session_id):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     full_file_path = os.path.join(cur_dir, f'{user_id}.json')
     # Читаем содержимое JSON
@@ -36,7 +37,12 @@ def add_new_session(user_id, session_id, time_st=datetime.datetime.utcnow()):
         userdata = json.load(userprofile)
 
     # Обрабатываем содержимое
-    userdata[session_id] = {"time_st": str(time_st), "time_end": None, "scores": 0}
+    time_st = datetime.datetime.utcnow()
+    userdata[session_id] = {"time_st": str(time_st),
+                            "time_end": None,
+                            "time_session": None,
+                            "scores": 0
+                            }
 
     # Перезаписываем содержимое
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
@@ -64,7 +70,7 @@ def update_scores(user_id, session_id, score):
     print(f'Scores updated {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
 
-def update_time_end(user_id, session_id, time_end=datetime.datetime.utcnow()):
+def update_time_end(user_id, session_id):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     full_file_path = os.path.join(cur_dir, f'{user_id}.json')
     # Читаем содержимое JSON
@@ -72,7 +78,16 @@ def update_time_end(user_id, session_id, time_end=datetime.datetime.utcnow()):
         userdata = json.load(userprofile)
 
     # Обрабатываем содержимое
-    userdata[session_id]["time_end"] = time_end
+    time_end = datetime.datetime.utcnow()
+    userdata[session_id]["time_end"] = str(time_end)
+
+    format = '%Y-%m-%d %H:%M:%S.%f'
+    time_st = datetime.datetime.strptime(userdata[session_id]["time_st"], format)
+    time_end = datetime.datetime.strptime(userdata[session_id]["time_end"], format)
+    time_session_t = time_end - time_st
+    time_session = time_session_t.total_seconds()
+
+    userdata[session_id]["time_session"] = time_session
 
     # Перезаписываем содержимое
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
@@ -93,3 +108,5 @@ if __name__ == '__main__':
     session_id = 'a655311b-1633-4121-bfd7-862a8913e849'
     add_new_session(user_id, session_id)
     update_scores(user_id, session_id, 2)
+    time.sleep(10)
+    update_time_end(user_id, session_id)

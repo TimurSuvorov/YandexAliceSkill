@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import rapidjson
 import re
 
@@ -14,7 +16,7 @@ exit_light = ["нет", "не хочу", "закончим", "не начнём"
 exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу"]
 rules = ["правила", "помощь"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь"]
-dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать"]
+dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать", "следующий вопрос"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал"]
 
 
@@ -23,6 +25,7 @@ repeat = ["повтор", "не понял", "ещё раз", "не расслы
 def anchorhandler(event):
     event: dict = rapidjson.load(event)
     command = event['request']['command']
+    pprint(event)
     sessionuser_id = event['session']['user']['user_id']
     print(sessionuser_id)
     session_state = event['state']['session']
@@ -32,12 +35,15 @@ def anchorhandler(event):
         response_dict = hi_replies()
     elif not session_state.get("question_dict") and re.search("|".join(exit_light), command):
         response_dict = bye_replies(session_state)
+        # Обработка сообщений из списка dont_know и если сообщений до не было!
+    elif not session_state.get("question_dict") and re.search("|".join(dont_know), command):
+         response_dict = dontknow(command, session_state)
+    # Обработка незнания из списка dont_know и если сообщение до этого не было сервисным
+    elif re.search("|".join(dont_know), command) and not session_state.get("yesno_type"):
+        response_dict = dontknow(command, session_state)
     # Обработка запроса повторения
     elif re.search("|".join(repeat), command):
         response_dict = repeat_replies(session_state)
-    # Обработка незнания
-    elif re.search("|".join(dont_know), command):
-        response_dict = dontknow(session_state)
     # Обработка сервисных ответов "Правила", "Что умеешь?"
     elif re.search("|".join(rules), command):
         response_dict = rules_replies(session_state)
@@ -58,7 +64,8 @@ def anchorhandler(event):
         'version': event['version'],
         'session': event['session'],
         'response': response_dict["response"],
-        'session_state': response_dict["session_state"]
+        'session_state': response_dict["session_state"],
+        'analytics': response_dict.get("analytics", {})
     }
     return JsonResponse(resp_data)
 

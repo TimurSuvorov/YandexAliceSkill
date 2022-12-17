@@ -26,20 +26,30 @@ def repeat_replies(session_state: dict) -> dict:
         # Проверяем признак того, что перед нами вопрос с вариантами ответов, а не сервисное
         if len(question_variants) > 0:
             response: dict = {
-                'text': f'{question_body}.\n{postsentence}:\n {variants.replace("+", "")}',
-                'tts': f'Конечно!sil <[50]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
+                'text': f'✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n {variants.replace("+", "")}',
+                'tts': f'Конечно!sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
             }
         else:
             response: dict = {
-                'text': f'{question_body}',
-                'tts': f'Конечно!sil <[50]>{tts_prompt_sound(question_body)}',
+                'text': f'✨{question_body.replace(" - ", "").replace("+", "")}',
+                'tts': f'Конечно!sil <[100]>{tts_prompt_sound(question_body)}',
                 'buttons': [{'title': 'Дальше', 'hide': 'true'}],
                 'end_session': 'False'
             }
 
     return {
             "response": response,
+            "analytics": {
+            "events": [
+                {
+                    "name": "Повторить",
+                    "value": {
+                        "Объект повторения": response['text'],
+                        }
+                },
+            ]
+        },
             "session_state": session_state
         }

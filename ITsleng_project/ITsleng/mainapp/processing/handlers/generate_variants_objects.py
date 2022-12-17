@@ -16,6 +16,7 @@ def generate_var_string(question_variants: list) -> str:
     buttons_str = "•   " + "\n•   ".join(question_variants)
     return buttons_str
 
+
 if __name__ == '__main__':
     f = generate_var_buttons(['окиара', 'таска', 'фича'])
     print(f)

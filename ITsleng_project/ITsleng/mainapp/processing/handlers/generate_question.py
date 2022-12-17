@@ -14,10 +14,19 @@ def generate_question() -> dict:
 def tts_prompt_sound(question_body):
     if "<...>" in question_body:
         question_body = question_body.replace("<...>", "<speaker audio='alice-sounds-human-cough-1.opus'>")
-        # question_body = question_body.replace("<...>", "<speaker audio='alice-sounds-animals-crow-1.opus'>")
     return question_body
 
 
+def remove_tts_symbols(instance: str):
+    if "+" in instance or " - " in instance:
+        instance = instance.replace(" - ", "").replace("+", "")
+    return instance
+
+
+if __name__ == '__main__':
+    s = " - +Оффер – это значит предложить. С предложениями надо быть аккуратнее."
+    r = remove_tts_symbols(s)
+    print(r)
 
 
 

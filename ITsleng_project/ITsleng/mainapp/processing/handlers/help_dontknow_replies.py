@@ -6,22 +6,50 @@ from .next_question import next_question
 from ..extract_json import get_db_sentences, get_db_sounds
 
 
-def dontknow(session_state):
+def dontknow(command, session_state):
     # Если "session_state" пустой по каким-либо причинам, Алиса прикинится валенком
+    noquestionbefore = random.choice(['А ведь мы даже ещё не начали, а ты такое говоришь. Давай я уже спрошу тебя о чём-нибудь?',
+                                      'Мы пока ещё в начале пути. Давай начнём?'
+                                      ])
     if not session_state.get("question_dict"):
         response: dict = {
-            'text': f'Ой, я запуталась. ¯\_(ツ)_/¯ . Давай я лучше загадаю тебе слово?',
-            'tts': f'Ой, я запуталась. sil <[30]> Давай я лучше загадаю тебе слово?',
-            'buttons': [{'title': 'Дальше', 'hide': 'true'}],
+            'text': f'{noquestionbefore}',
+            'tts': f'{noquestionbefore}',
+            'buttons': [{'title': 'Давай', 'hide': 'true'}],
             'end_session': 'False'
         }
-        sessionstate = {"yesno_type": 10}
+        sessionstate = session_state
+        # Ответа валенка
+        analytics = {
+            "events": [
+                {
+                    "name": "Валенок без вопроса",
+                    "value": {
+                        "Ответ": command
+                    }
+                },
+            ]
+        }
+
     # Если сообщение было сервисным, то генерируем новый вопрос
     elif session_state.get("service"):
+        print('Ненужный сценарий???')
         question_dict = generate_question()
         response_dict = next_question(question_dict)
         response = response_dict["response"]
         sessionstate = response_dict["session_state"]
+        print("From dontknow")
+        analytics = {
+            "events": [
+                {
+                    "name": "Новый вопрос",
+                    "value": {
+                        "Вопрос": question_dict["sentence"].replace(" - ", "").replace("+", ""),
+                    }
+                }
+            ]
+        }
+
     else:
         sentences = get_db_sentences()
         postsentence = random.choice(sentences["POSTsentence"])
@@ -37,12 +65,13 @@ def dontknow(session_state):
 
         sounds = get_db_sounds()
         wrongsound = random.choice(sounds["WRONG"])
-        noworrysentence = random.choice(["Ну ничего", "Не переживай", "Тогда слушай"])
+        noworrysentence = random.choice(sentences["NOWORRYsentence"])
+        letnext = random.choice(sentences["LETSNEXTsentence"])
         variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'{noworrysentence}.\nПравильный ответ: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \nПоехали дальше. {question_body}\n{postsentence}:\n{variants.replace("+", "")}',
-            'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[70]> Поехали дальше. sil <[50]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
+            'text': f'{noworrysentence}\nПравильный ответ: {answer.capitalize().replace("+", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}. ✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -51,8 +80,26 @@ def dontknow(session_state):
             "question_dict": question_dict,
             "attempt": 1,
         }
+        print("From dontknow_")
+        analytics = {
+            "events": [
+                {
+                    "name": "Сдался",
+                    "value": {
+                        "Вопрос": session_state["question_dict"]["sentence"],
+                    }
+                },
+                {
+                    "name": "Новый вопрос",
+                    "value": {
+                        "Вопрос": question_dict["sentence"].replace(" - ", "").replace("+", ""),
+                    }
+                }
+            ]
+        }
 
     return {
         "response": response,
+        "analytics": analytics,
         "session_state": sessionstate
     }

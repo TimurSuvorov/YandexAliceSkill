@@ -20,7 +20,7 @@ def next_question(question_dict: dict) -> dict:
     variants = generate_var_string(question_variants)
 
     response: dict = {
-            'text': f'{question_body}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
             'tts': f'{nextquestsound}sil <[5]>{tts_prompt_sound(question_body)}sil <[50]>{postsentence}sil <[70]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

@@ -23,10 +23,17 @@ def hi_replies() -> dict:
             'tts': f'{startsound}{hi_text}',
             'end_session': 'false'
     }
-    sessionstate = {'service': 11}
+    sessionstate = {'service': 11, 'yesno_type': 10}
     return {
         "response": response,
-        "session_state": sessionstate
+        "analytics": {
+            "events": [
+                {
+                    "name": "Запуск навыка",
+                },
+            ]
+        },
+        "session_state": sessionstate,
     }
 
 
@@ -47,6 +54,13 @@ def bye_replies(session_state):
 
     return {
         "response": response,
+        "analytics": {
+            "events": [
+                {
+                    "name": "Выход из навыка",
+                },
+            ]
+        },
         "session_state": session_state
     }
 
@@ -54,18 +68,21 @@ def bye_replies(session_state):
 def rules_replies(session_state: dict) -> dict:
     sentences = get_db_sentences()
     rules_text = sentences["RULES"]["text"]
+    rules_tts = sentences["RULES"]["tts"]
     # Если функция вызвана во время вопроса, когда присутствует session_state["question_dict"]["answers"]
     if session_state.get('question_dict', {}).get('answers'):
-        rules_text += 'Прод+олжим?'
+        rules_text += 'Продолжим?'
+        rules_tts += 'Прод+олжим?'
     else:
-        rules_text += 'Ну чт+о, начин+аем?'
+        rules_text += 'Ну что, начинаем?'
+        rules_tts += 'Ну чт+о, начин+аем?'
 
     response: dict = {
-            'text': rules_text.replace(" - ", "").replace("+", ""),
+            'text': rules_text,
             'buttons': [
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
             ],
-            'tts': rules_text,
+            'tts': rules_tts,
             'end_session': 'false'
     }
 
@@ -73,10 +90,16 @@ def rules_replies(session_state: dict) -> dict:
     sessionstate = session_state
     sessionstate["yesno_type"] = 10
     sessionstate["service"] = 11
-    print('rules:', sessionstate)
 
     return {
         "response": response,
+        "analytics": {
+            "events": [
+                {
+                    "name": "Запрос 'Правила'",
+                },
+            ]
+        },
         "session_state": sessionstate
     }
 
@@ -107,5 +130,12 @@ def about_replies(session_state) -> dict:
 
     return {
         "response": response,
+        "analytics": {
+            "events": [
+                {
+                    "name": "Запрос 'Что умеешь?'",
+                },
+            ]
+        },
         "session_state": sessionstate
     }

@@ -20,13 +20,26 @@ def stupid_replies(command, session_state):
     stupid_phrase = random.choice(stupid_phrases)
 
     response: dict = {
-        'text': f'{stupid_phrase.replace(" - ", "").replace("+", "")}\n{question_body}.\n{postsentence}:\n {variants.replace("+", "")}',
-        'tts': f'{stupid_phrase}sil <[50]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
+        'text': f'{stupid_phrase.replace(" - ", "").replace("+", "")}\n✨{question_body.replace(" - ", "").replace("+", "")}.\n{postsentence}:\n {variants.replace("+", "")}',
+        'tts': f'{stupid_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
         'buttons': generate_var_buttons(question_variants),
         'end_session': 'False'
     }
 
+    analytics = {
+        "events": [
+            {
+                "name": "Валенок с вопросом",
+                "value": {
+                    "Вопрос": session_state['question_dict']['sentence'],
+                    "Ответ": command
+                }
+            },
+        ]
+    }
+
     return {
         "response": response,
+        "analytics": analytics,
         "session_state": session_state
     }
