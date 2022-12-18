@@ -6,7 +6,7 @@ from mainapp.processing.handlers.generate_question import generate_question, tts
 from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
 from mainapp.processing.handlers.service_replies import bye_replies
 
-yes_answer = ["да$", "^давай", "хорошо", "я не против", "начнём", "продолж", "начать", "^ok$", "^ок$"]
+yes_answer = ["да$", "давай", "хорошо", "я не против", "начнём", "продолж", "начать", "^ok$", "^ок$", "начинаем$", "поехали$"]
 no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем"]
 
 def yes_no_cont_replies(command, session_state):
@@ -33,7 +33,7 @@ def yes_no_cont_replies(command, session_state):
             variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'Прекрасно! ✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'Прекрасно!\n✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
             'tts': f'Прекрасно! sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

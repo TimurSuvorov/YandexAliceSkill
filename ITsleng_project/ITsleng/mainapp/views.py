@@ -16,7 +16,7 @@ from mainapp.processing.handlers.repeat_replies import repeat_replies
 from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп", "все пока", "всё пока", "я ухожу"]
-exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу", "мне надоело", "все пока", "всё пока"]
+exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$"]
 rules = ["правила", "помощь"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь"]
 dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать", "следующий вопрос"]
@@ -33,7 +33,6 @@ def anchorhandler(event):
     session_state = event['state']['session']
     nlu_tokens = event['request']["nlu"]["tokens"]
     print(original_utterance)
-    # pprint(event)
 
     # Обработка нового входа
     if event['session']['new']:
@@ -69,7 +68,7 @@ def anchorhandler(event):
         print('10#')
         response_dict = repeat_replies(session_state)
     # Обработка запрос с мнимыми ответами Да/Нет
-    elif len(original_utterance.split()) >= 4:
+    elif len(original_utterance.split()) > 4:
         print('11#')
         response_dict = many_words(command, session_state)
     elif session_state.get("yesno_type"):

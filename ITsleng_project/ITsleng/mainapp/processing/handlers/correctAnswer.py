@@ -5,11 +5,13 @@ from ..extract_json import get_db_sentences, get_db_sounds
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 
 
+
 def correctanswer(question_dict, command, session_state):
     # Выбираем случайным образом предложение похвалы и "вариантов"
     sentences = get_db_sentences()
     nicesentence = random.choice(sentences["NICEsentence"])
     postsentence = random.choice(sentences["POSTsentence"])
+    letsnext = random.choice(sentences["LETSNEXTsentence"])
 
     # Проверяем на схожесть слова
     rightanswer = session_state["question_dict"]["answers"][0].replace("+", "")
@@ -29,9 +31,16 @@ def correctanswer(question_dict, command, session_state):
     question_body = question_dict["sentence"]
     question_variants = question_dict["variants"]
     variants = generate_var_string(question_variants)
+
+    # Показывать или нет объяснение при верном ответе
+    question_explanation = ""
+    if random.choice([True, False, False]):
+        question_explanation = session_state["question_dict"]["explanation"]
+        question_explanation = f'Ответ: {rightanswer}. -  {question_explanation}'
+
     response: dict = {
-            'text': f'{nicesentence}\n✨{question_body.replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
-            'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
+            'text': f'{nicesentence} {question_explanation.replace(" - ", "").replace("+", "")} {letsnext}.\n✨{question_body.replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
+            'tts': f'{correctsound}sil <[50]>{nicesentence}{question_explanation} sil <[100]> {letsnext}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }
