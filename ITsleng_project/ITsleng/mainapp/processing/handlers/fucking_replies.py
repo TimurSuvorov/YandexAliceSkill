@@ -21,7 +21,7 @@ def fucking_replies(command, session_state):
                                       ])
 
 
-    # Если сообщение сервисное и до этого не было задано вопросов
+    # До этого не было задано вопросов
     if not session_state.get("question_dict"):
         response: dict = {
             'text': f'{fucking_sentence.replace(" - ", "").replace("+", "")} {letstart_empty.replace(" - ", "").replace("+", "")}',

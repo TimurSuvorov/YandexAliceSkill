@@ -4,6 +4,7 @@ import os
 import time
 from pprint import pprint
 
+USERFOLDER = 'userfiles'
 
 def check_exist_profile(user_id: str) -> bool:
     cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,7 +22,7 @@ def create_default_profile(user_id, session_id, time_st=datetime.datetime.utcnow
     }
     default_content_json = json.dumps(default_content)
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(cur_dir, f'{user_id}.json')
+    full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # запись данных JSON в файл
     with open(full_file_path, "w", encoding="utf-8") as new_profile:
         new_profile.write(default_content_json)
@@ -31,7 +32,7 @@ def create_default_profile(user_id, session_id, time_st=datetime.datetime.utcnow
 
 def add_new_session(user_id, session_id):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(cur_dir, f'{user_id}.json')
+    full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
         userdata = json.load(userprofile)
@@ -54,7 +55,7 @@ def add_new_session(user_id, session_id):
 
 def update_scores(user_id, session_id, score):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(cur_dir, f'{user_id}.json')
+    full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
         userdata = json.load(userprofile)
@@ -72,7 +73,7 @@ def update_scores(user_id, session_id, score):
 
 def update_time_end(user_id, session_id):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(cur_dir, f'{user_id}.json')
+    full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
         userdata = json.load(userprofile)

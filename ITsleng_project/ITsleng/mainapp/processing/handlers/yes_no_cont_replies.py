@@ -6,16 +6,18 @@ from mainapp.processing.handlers.generate_question import generate_question, tts
 from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
 from mainapp.processing.handlers.service_replies import bye_replies
 
-yes_answer = ["да$", "давай", "хорошо", "я не против", "начнём", "продолж", "начать", "^ok$", "^ок$", "начинаем$", "поехали$"]
-no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем"]
+yes_answer = [r"^да$", r"\bда$", "давай", "хорошо", "я не против", "начн.м", "продолж", "начать", r"\bok$", r"^окей$", r"начинаем$", r"поехали$"]
+no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем", "не начинаем"]
 
-def yes_no_cont_replies(command, session_state):
+def yes_no_cont_replies(command, session_state, session_id, intents):
     sentences = get_db_sentences()
     postsentence = random.choice(sentences["POSTsentence"])
     analytics = {}
 
     # Если ответ положительный, то
-    if re.search("|".join(yes_answer), command):
+    if (re.search("|".join(yes_answer), command) or intents.get('YANDEX.CONFIRM', {})) and \
+            not intents.get('YANDEX.REJECT', {}) and \
+            not re.search("|".join(no_answer), command):
         # Вызвано ли сервисное сообщение во время вопроса - присутствует ли session_state["question_dict"]["answers"]
         # Если в прошлом ответе есть вопрос, значит его возвращаем
         if session_state.get('question_dict', {}).get('answers'):
@@ -58,7 +60,7 @@ def yes_no_cont_replies(command, session_state):
 
     # Если ответ отрицательный, то прощаемся
     elif re.search("|".join(no_answer), command):
-        response = bye_replies(session_state)["response"]
+        response = bye_replies(session_state, session_id)["response"]
         sessionstate = session_state
 
     # Если ответ не из списка Да/Нет, то прикинуться валенком

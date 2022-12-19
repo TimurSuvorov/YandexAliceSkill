@@ -3,9 +3,12 @@ import random
 import os
 
 from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
+from mainapp.processing.handle_sessionfile import create_session_file, remove_session_file
 
 
-def hi_replies() -> dict:
+def hi_replies(session_id) -> dict:
+    # Создание файла с вопросами для сессии
+    create_session_file(session_id)
     # Фраза приветствия
     sentences = get_db_sentences()
     hi_text = sentences["HIsentence"]
@@ -37,7 +40,9 @@ def hi_replies() -> dict:
     }
 
 
-def bye_replies(session_state):
+def bye_replies(session_state, session_id):
+    remove_session_file(session_id)
+
     sentences = get_db_sentences()
     bye_text = random.choice(sentences["BYEsentence"])
 

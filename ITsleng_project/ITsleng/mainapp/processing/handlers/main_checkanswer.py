@@ -19,15 +19,13 @@ stupid_answers = ["^да+", "да уж", "ништяк", "^нет", "^ой", "б
 }
 '''
 
-def checkanswer(command, session_state: dict):
+def checkanswer(command, session_state, session_id):
     # Проверка есть ли предыдущий вопрос (session_state={"question_dict": {}})
     # или сообщение было сервисное (session_state={"service": 11})
     if not session_state.get('question_dict', {}).get('answers') or \
             session_state.get("service"):  # CHECKIT
-        # Генерируем новый случайный вопрос-словарь из db_sentences.json
-        question_dict = generate_question()
-        # Передаем его для создания ответа в формате
-        response_dict = next_question(question_dict)
+        # Генерируем новый вопрос
+        response_dict = next_question(session_id)
         return response_dict
     # Проверка на явно тупые ответы
     elif re.search("|".join(stupid_answers), command):

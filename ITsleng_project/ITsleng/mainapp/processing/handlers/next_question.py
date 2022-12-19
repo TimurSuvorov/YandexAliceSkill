@@ -3,9 +3,12 @@ import random
 from .generate_question import tts_prompt_sound
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
+from ..handle_sessionfile import get_qa_session_sentence
 
 
-def next_question(question_dict: dict) -> dict:
+def next_question(session_id) -> dict:
+    # Берем новый вопрос для сессии
+    question_dict = get_qa_session_sentence(session_id)
     # Из вопроса-словаря берем сам вопрос
     question_body = question_dict["sentence"]
     question_variants = question_dict["variants"]

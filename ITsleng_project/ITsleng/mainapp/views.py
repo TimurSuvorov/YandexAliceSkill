@@ -17,8 +17,8 @@ from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп", "все пока", "всё пока", "я ухожу"]
 exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$"]
-rules = ["правила", "помощь"]
-about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь"]
+rules = ["правила", "помощь", "помоги", "help"]
+about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь", "еще можешь"]
 dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать", "следующий вопрос"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал"]
 
@@ -30,17 +30,19 @@ def anchorhandler(event):
     command: str = event['request']['command']
     original_utterance: str = event['request']['original_utterance']
     sessionuser_id = event['session']['user']['user_id']
+    session_id = event['session']['session_id']
     session_state = event['state']['session']
-    nlu_tokens = event['request']["nlu"]["tokens"]
-    print(original_utterance)
+    nlu_tokens = event['request']["nlu"]['tokens']
+    intents = event['request']['nlu']['intents']
+    print(f'>>{session_state.get("question_dict", {}).get("sentence", {})}\n<<{original_utterance}')
 
     # Обработка нового входа
     if event['session']['new']:
         print('1#')
-        response_dict = hi_replies()
-    elif not session_state.get("question_dict") and re.search("|".join(exit_light), command):
+        response_dict = hi_replies(session_id)
+    elif not session_state.get("question_dict") and re.search("|".join(exit_hard), command):
         print('2#')
-        response_dict = bye_replies(session_state)
+        response_dict = bye_replies(session_state, session_id)
     # Обработка сервисных ответов "Правила", "Что умеешь?"
     elif re.search("|".join(rules), command):
         print('3#')
@@ -52,7 +54,7 @@ def anchorhandler(event):
         print('6#')
         response_dict = fucking_replies(command, session_state)
     # Обработка сообщений "вопрос на вопрос"
-    elif re.search('\?$', original_utterance):
+    elif intents.get('question_1', {}):
         print('7#')
         response_dict = question_on_question_replies(command, session_state)
     # Обработка сообщений из списка dont_know и если сообщений до не было!
@@ -67,21 +69,23 @@ def anchorhandler(event):
     elif re.search("|".join(repeat), command):
         print('10#')
         response_dict = repeat_replies(session_state)
-    # Обработка запрос с мнимыми ответами Да/Нет
-    elif len(original_utterance.split()) > 4:
+    # Обработка запроса с длинными предложениями и вопросы не распознаны как согласия или реджекта(чтоб шли ниже)
+    elif len(original_utterance.split()) > 4 and \
+        not (intents.get('YANDEX.CONFIRM', {}) or intents.get('YANDEX.REJECT', {})):
         print('11#')
         response_dict = many_words(command, session_state)
+    # Обработка запрос с мнимыми ответами Да/Нет
     elif session_state.get("yesno_type"):
         print('12#')
-        response_dict = yes_no_cont_replies(command, session_state)
+        response_dict = yes_no_cont_replies(command, session_state, session_id, intents)
     # Обработка требования выхода
     elif re.search("|".join(exit_hard), command):
         print('13#')
-        response_dict = bye_replies(session_state)
+        response_dict = bye_replies(session_state, session_id)
     else:
         # Здесь должен остаться только вариант с вопросом внутри - его обрабатываем дальше
         print('14#')
-        response_dict = checkanswer(command, session_state)
+        response_dict = checkanswer(command, session_state, session_id)
 
 
     resp_data = {
