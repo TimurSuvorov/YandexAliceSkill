@@ -7,7 +7,7 @@ from .correctAnswer import correctanswer
 from .stupid_replies import stupid_replies
 from .wrongAnswer import incorrectanswer
 
-stupid_answers = ["^да+", "да уж", "ништяк", "^нет", "^ой", "блин", "жопа", "ерунда", "^упс"]
+stupid_answers = [r"^да+", "да уж", "ништяк", "^нет", "^ой", "блин", "ерунда", "^упс"]
 
 
 '''
@@ -34,14 +34,12 @@ def checkanswer(command, session_state, session_id):
         return response_dict
 
     if iscorrectanswer(command, session_state):
-        # Генерируем новый случайный вопрос-словарь из db_sentences.json
-        question_dict = generate_question()
-        # Передаем его для создания ответа в формате для случая "успеха пользователя"
-        response_dict = correctanswer(question_dict, command, session_state)
+        # Генерируем новый вопрос для создания ответа в формате для случая "успеха пользователя"
+        response_dict = correctanswer(command, session_state, session_id)
         return response_dict
     else:
         # В случае неверного ответа нам нужен заданный вопрос из session_state
-        response_dict = incorrectanswer(command, session_state)
+        response_dict = incorrectanswer(command, session_state, session_id)
         return response_dict
 
 

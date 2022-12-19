@@ -60,11 +60,11 @@ def anchorhandler(event):
     # Обработка сообщений из списка dont_know и если сообщений до не было!
     elif not session_state.get("question_dict") and re.search("|".join(dont_know), command):
          print('8#')
-         response_dict = dontknow(command, session_state)
+         response_dict = dontknow(command, session_state, session_id)
     # Обработка незнания из списка dont_know и если сообщение до этого не было сервисным
     elif re.search("|".join(dont_know), command) and not session_state.get("yesno_type"):
         print('9#')
-        response_dict = dontknow(command, session_state)
+        response_dict = dontknow(command, session_state, session_id)
     # Обработка запроса повторения
     elif re.search("|".join(repeat), command):
         print('10#')

@@ -2,6 +2,7 @@ import random
 import re
 
 from mainapp.processing.extract_json import get_db_sentences
+from mainapp.processing.handle_sessionfile import get_qa_session_sentence
 from mainapp.processing.handlers.generate_question import generate_question, tts_prompt_sound
 from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
 from mainapp.processing.handlers.service_replies import bye_replies
@@ -27,8 +28,8 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             question_variants = question_dict['variants']
             variants = generate_var_string(question_variants)
         else:
-            # Генерируем сразу новый вопрос, вытаскиваем его тело и варианты для подстановки
-            question_dict = generate_question()
+            # Берем новый вопрос для сессии
+            question_dict = get_qa_session_sentence(session_id)
             attempt = 1
             question_body = question_dict["sentence"]
             question_variants = question_dict["variants"]
@@ -41,7 +42,6 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             'end_session': 'False'
         }
 
-        print("From yesno")
         analytics = {
             "events": [
                 {
@@ -65,9 +65,46 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
 
     # Если ответ не из списка Да/Нет, то прикинуться валенком
     else:
+        # До этого не было задано вопросов
+        if not session_state.get("question_dict"):
+            yesno_tupik_replies = random.choice(["Как-то нелогично. А я просто хочу поиграть. -  Поехали?",
+                                                 "Я очень рада за тебя. Но давай уже начнём?",
+                                                 "И где логика? -  Давай уже стартуем?"]
+                                                )
+
+            analytics = {
+                "events": [
+                    {
+                        "name": "Валенок без вопроса",
+                        "value": {
+                            "Вопрос": session_state['question_dict']['sentence'],
+                            "Ответ": command
+                        }
+                    },
+                ]
+            }
+
+        # До был задан вопрос, был перерыв на сервисное сообщение
+        else:
+            yesno_tupik_replies = random.choice(["Я очень рада за тебя. Продолжим?",
+                                                 "До этого я тебя лучше понимала. Давай просто продолжим?",
+                                                 "Тут сложно что-то прокомментировать. Давай просто продолжим?"
+                                                 ])
+
+            analytics = {
+                "events": [
+                    {
+                        "name": "Валенок с вопросом",
+                        "value": {
+                            "Ответ": command
+                        }
+                    },
+                ]
+            }
+
         response: dict = {
-            'text': f'Ой, я не понимаю, что ты хочешь. Скажи просто "Да" или "Нет"',
-            'tts': f'Ой sil <[50]>, я не понимаю, что ты хочешь.sil <[50]> Скажи просто "Да" или "Нет"',
+            'text': f'{yesno_tupik_replies.replace(" - ", "").replace("+", "")}',
+            'tts': f'{yesno_tupik_replies}',
             'buttons': [
                 {'title': 'Да', 'hide': 'true'},
                 {'title': 'Нет', 'hide': 'true'}
@@ -78,35 +115,8 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         # Передаём прозрачно
         sessionstate = session_state
 
-
-        # Ответа валенка
-        # Если здесь вопрос игры
-        if session_state.get('question_dict', {}).get('answers'):
-            analytics = {
-                "events": [
-                    {
-                        "name": "Валенок с вопросом",
-                        "value": {
-                            "Вопрос": session_state['question_dict']['sentence'],
-                            "Ответ": command
-                        }
-                    },
-                ]
-            }
-        # Если пока еще нет вопроса
-        else:
-            analytics = {
-                "events": [
-                    {
-                        "name": "Валенок без вопроса",
-                        "value": {
-                            "Ответ": command
-                        }
-                    },
-                ]
-            }
-
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
+    print("From yesno")
     return {
         "response": response,
         "analytics": analytics,

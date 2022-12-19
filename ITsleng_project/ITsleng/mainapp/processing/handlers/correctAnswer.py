@@ -3,10 +3,12 @@ import random
 from .generate_question import tts_prompt_sound
 from ..extract_json import get_db_sentences, get_db_sounds
 from .generate_variants_objects import generate_var_buttons, generate_var_string
+from ..handle_sessionfile import get_qa_session_sentence
 
 
-
-def correctanswer(question_dict, command, session_state):
+def correctanswer(command, session_state, session_id):
+    # Берем новый вопрос для сессии
+    question_dict = get_qa_session_sentence(session_id)
     # Выбираем случайным образом предложение похвалы и "вариантов"
     sentences = get_db_sentences()
     nicesentence = random.choice(sentences["NICEsentence"])

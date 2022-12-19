@@ -4,10 +4,11 @@ import re
 from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
 from .generate_question import generate_question, tts_prompt_sound
 from .generate_variants_objects import generate_var_buttons, generate_var_string
+from ..handle_sessionfile import get_qa_session_sentence
 
 letsnext = ["Поехали дальше", "Следующий вопрос", "Очередной вопрос", "Двигаемся дальше"]
 
-def incorrectanswer(command, session_state: dict):
+def incorrectanswer(command, session_state, session_id):
 
     sentences = get_db_sentences()
 
@@ -65,8 +66,8 @@ def incorrectanswer(command, session_state: dict):
         # Получаем первый из списка правильный ответ и объяснение
         answer = session_state["question_dict"]["answers"][0]
         question_explanation = session_state["question_dict"]["explanation"]
-        # Генерируем сразу новый вопрос и восстанавливаем количество попыток к нему
-        question_dict = generate_question()
+        # Берем новый вопрос для сессии и восстанавливаем количество попыток к нему
+        question_dict = get_qa_session_sentence(session_id)
         attempt = 1
         # Из вопроса-словаря берем сам вопрос для подстановки в ответ
         question_body = question_dict["sentence"]

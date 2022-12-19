@@ -41,17 +41,19 @@ def repeat_replies(session_state: dict) -> dict:
                 'end_session': 'False'
             }
 
+    analytics = {
+        "events": [
+            {
+                "name": "Повторить",
+                "value": {
+                    "Объект повторения": response['text'],
+                }
+            },
+        ]
+    }
+
     return {
             "response": response,
-            "analytics": {
-            "events": [
-                {
-                    "name": "Повторить",
-                    "value": {
-                        "Объект повторения": response['text'],
-                        }
-                },
-            ]
-        },
+            "analytics": analytics,
             "session_state": session_state
         }

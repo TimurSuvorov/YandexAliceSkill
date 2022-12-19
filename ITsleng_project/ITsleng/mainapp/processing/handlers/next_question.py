@@ -29,9 +29,21 @@ def next_question(session_id) -> dict:
             'end_session': 'False'
     }
 
+    analytics = {
+        "events": [
+            {
+                "name": "Новый вопрос",
+                "value": {
+                    "Вопрос": question_body.replace(" - ", "").replace("+", ""),
+                }
+            }
+        ]
+    }
+
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
     return {
         "response": response,
+        "analytics": analytics,
         "session_state": {
             "question_dict": question_dict,
             "attempt": 1

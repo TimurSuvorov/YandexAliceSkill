@@ -4,9 +4,10 @@ from .generate_question import generate_question, tts_prompt_sound
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 from .next_question import next_question
 from ..extract_json import get_db_sentences, get_db_sounds
+from ..handle_sessionfile import get_qa_session_sentence
 
 
-def dontknow(command, session_state):
+def dontknow(command, session_state, session_id):
     # Если "session_state" пустой по каким-либо причинам, Алиса прикинится валенком
     noquestionbefore = random.choice(['А ведь мы даже ещё не начали, а ты такое говоришь. Давай я уже спрошу тебя о чём-нибудь?',
                                       'Мы пока ещё в начале пути. Давай начнём?'
@@ -34,8 +35,8 @@ def dontknow(command, session_state):
     # Если сообщение было сервисным, то генерируем новый вопрос
     elif session_state.get("service"):
         print('Ненужный сценарий???')
-        question_dict = generate_question()
-        response_dict = next_question(question_dict)
+        # Генерируем ответ с новым вопросом
+        response_dict = next_question(session_id)
         response = response_dict["response"]
         sessionstate = response_dict["session_state"]
         print("From dontknow")
@@ -56,8 +57,8 @@ def dontknow(command, session_state):
         # Получаем первый из списка правильный ответ и его объяснение
         answer = session_state["question_dict"]["answers"][0]
         question_explanation = session_state["question_dict"]["explanation"]
-        # Генерируем сразу новый вопрос и восстанавливаем количество попыток к нему
-        question_dict = generate_question()
+        # Берем новый вопрос для сессии
+        question_dict = get_qa_session_sentence(session_id)
         # Из вопроса-словаря берем сам вопрос для подстановки в ответ
         question_body = question_dict["sentence"]
         # Генерируем кнопки для нового вопроса
