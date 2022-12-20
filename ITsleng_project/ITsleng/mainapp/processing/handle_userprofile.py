@@ -1,5 +1,6 @@
 import datetime
 import json
+import rapidjson
 import os
 import time
 from pprint import pprint
@@ -20,7 +21,7 @@ def create_default_profile(user_id, session_id, time_st=datetime.datetime.utcnow
         "allscores": 0,
          session_id: {}
     }
-    default_content_json = json.dumps(default_content)
+    default_content_json = rapidjson.dumps(default_content, indent=4)
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # запись данных JSON в файл
@@ -35,7 +36,7 @@ def add_new_session(user_id, session_id):
     full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
-        userdata = json.load(userprofile)
+        userdata = rapidjson.load(userprofile)
 
     # Обрабатываем содержимое
     time_st = datetime.datetime.utcnow()
@@ -47,7 +48,7 @@ def add_new_session(user_id, session_id):
 
     # Перезаписываем содержимое
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
-        userprofile.write(json.dumps(userdata))
+        userprofile.write(rapidjson.dumps(userdata, indent=4))
 
     print(f'Add new session {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
@@ -58,7 +59,7 @@ def update_scores(user_id, session_id, score):
     full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
-        userdata = json.load(userprofile)
+        userdata = rapidjson.load(userprofile)
 
     # Обрабатываем содержимое
     userdata["allscores"] += score
@@ -66,7 +67,7 @@ def update_scores(user_id, session_id, score):
 
     # Перезаписываем содержимое
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
-        userprofile.write(json.dumps(userdata))
+        userprofile.write(rapidjson.dumps(userdata, indent=4))
 
     print(f'Scores updated {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
@@ -76,7 +77,7 @@ def update_time_end(user_id, session_id):
     full_file_path = os.path.join(cur_dir, USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
-        userdata = json.load(userprofile)
+        userdata = rapidjson.load(userprofile)
 
     # Обрабатываем содержимое
     time_end = datetime.datetime.utcnow()
@@ -92,7 +93,7 @@ def update_time_end(user_id, session_id):
 
     # Перезаписываем содержимое
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
-        userprofile.write(json.dumps(userdata))
+        userprofile.write(rapidjson.dumps(userdata, indent=4))
 
     print(f'Last_time updated {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
@@ -102,12 +103,14 @@ if __name__ == '__main__':
     session_id = 'a6803c77-9cac-42e5-88ca-108cb1cecc80'
     create_default_profile(user_id, session_id)
     add_new_session(user_id, session_id)
+    time.sleep(1.0)
+    update_time_end(user_id, session_id)
     session_id = '364c6e58-6578-48a3-847c-e5885d0aa6ec'
     add_new_session(user_id, session_id)
     update_scores(user_id, session_id, 3)
     update_scores(user_id, session_id, 1)
+    update_time_end(user_id, session_id)
     session_id = 'a655311b-1633-4121-bfd7-862a8913e849'
     add_new_session(user_id, session_id)
     update_scores(user_id, session_id, 2)
-    time.sleep(10)
     update_time_end(user_id, session_id)

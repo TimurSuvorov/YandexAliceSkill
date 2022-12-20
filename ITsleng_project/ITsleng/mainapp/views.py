@@ -16,7 +16,7 @@ from mainapp.processing.handlers.repeat_replies import repeat_replies
 from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп", "все пока", "всё пока", "я ухожу"]
-exit_hard = ["закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$"]
+exit_hard = ["не хочу играть", "все надоело", "закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу", "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$", "стоп"]
 rules = ["правила", "помощь", "помоги", "help"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь", "еще можешь"]
 dont_know = ["не знаю", "дальше", "сдаюсь", "ответ", "новый вопрос", "откуда мне знать", "следующий вопрос"]
@@ -47,7 +47,7 @@ def anchorhandler(event):
     elif re.search("|".join(rules), command):
         print('3#')
         response_dict = rules_replies(session_state)
-    elif re.search("|".join(about), command):
+    elif re.search("|".join(about), command) or intents.get('YANDEX.HELP', {}):
         print('4#')
         response_dict = about_replies(session_state)
     elif "*" in nlu_tokens:
@@ -66,7 +66,7 @@ def anchorhandler(event):
         print('9#')
         response_dict = dontknow(command, session_state, session_id)
     # Обработка запроса повторения
-    elif re.search("|".join(repeat), command):
+    elif re.search("|".join(repeat), command) or intents.get('YANDEX.REPEAT', {}):
         print('10#')
         response_dict = repeat_replies(session_state)
     # Обработка запроса с длинными предложениями и вопросы не распознаны как согласия или реджекта(чтоб шли ниже)

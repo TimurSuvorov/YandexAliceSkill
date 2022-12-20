@@ -77,7 +77,6 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
                     {
                         "name": "Валенок без вопроса",
                         "value": {
-                            "Вопрос": session_state['question_dict']['sentence'],
                             "Ответ": command
                         }
                     },
@@ -88,7 +87,7 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         else:
             yesno_tupik_replies = random.choice(["Я очень рада за тебя. Продолжим?",
                                                  "До этого я тебя лучше понимала. Давай просто продолжим?",
-                                                 "Тут сложно что-то прокомментировать. Давай просто продолжим?"
+                                                 "Тут сложно что-то прокомментировать. Может просто продолжим?"
                                                  ])
 
             analytics = {
@@ -96,6 +95,7 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
                     {
                         "name": "Валенок с вопросом",
                         "value": {
+                            "Вопрос": session_state['question_dict']['sentence'],
                             "Ответ": command
                         }
                     },
