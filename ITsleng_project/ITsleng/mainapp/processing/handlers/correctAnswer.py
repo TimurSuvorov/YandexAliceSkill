@@ -4,9 +4,10 @@ from .generate_question import tts_prompt_sound
 from ..extract_json import get_db_sentences, get_db_sounds
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 from ..handle_sessionfile import get_qa_session_sentence
+from ..handle_userprofile import update_scores
 
 
-def correctanswer(command, session_state, session_id):
+def correctanswer(command, session_state, user_id, session_id):
     # Берем новый вопрос для сессии
     question_dict = get_qa_session_sentence(session_id)
     # Выбираем случайным образом предложение похвалы и "вариантов"
@@ -40,8 +41,13 @@ def correctanswer(command, session_state, session_id):
         question_explanation = session_state["question_dict"]["explanation"]
         question_explanation = f'Ответ: {rightanswer}. -  {question_explanation}'
 
+    # Подсчёт рейтинга и его отображение
+    score = session_state["attempt"] + 1
+    cur_scores = update_scores(user_id, session_id, score)
+    cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {cur_scores[0]}\nТекущий: {cur_scores[1]}'
+
     response: dict = {
-            'text': f'{nicesentence} {question_explanation.replace(" - ", "").replace("+", "")} {letsnext}.\n✨{question_body.replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'{nicesentence} {question_explanation.replace(" - ", "").replace("+", "")} {letsnext}.\n✨{question_body.replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}{cur_rating}',
             'tts': f'{correctsound}sil <[50]>{nicesentence}{question_explanation} sil <[100]> {letsnext}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

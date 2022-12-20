@@ -5,9 +5,10 @@ from .generate_variants_objects import generate_var_buttons, generate_var_string
 from .next_question import next_question
 from ..extract_json import get_db_sentences, get_db_sounds
 from ..handle_sessionfile import get_qa_session_sentence
+from ..handle_userprofile import update_scores
 
 
-def dontknow(command, session_state, session_id):
+def dontknow(command, session_state, user_id, session_id):
     # Если "session_state" пустой по каким-либо причинам, Алиса прикинится валенком
     noquestionbefore = random.choice(['А ведь мы даже ещё не начали, а ты такое говоришь. Давай я уже спрошу тебя о чём-нибудь?',
                                       'Мы пока ещё в начале пути. Давай начнём?'
@@ -70,8 +71,13 @@ def dontknow(command, session_state, session_id):
         letnext = random.choice(sentences["LETSNEXTsentence"])
         variants = generate_var_string(question_variants)
 
+        # Подсчёт рейтинга и его отображение
+        score = 0
+        cur_scores = update_scores(user_id, session_id, score)
+        cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {cur_scores[0]}\nТекущий: {cur_scores[1]}'
+
         response: dict = {
-            'text': f'{noworrysentence}\nПравильный ответ: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'{noworrysentence}\nПравильный ответ: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}{cur_rating}',
             'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

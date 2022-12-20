@@ -5,10 +5,11 @@ from mainapp.processing.extract_json import get_db_sentences, get_db_sounds
 from .generate_question import generate_question, tts_prompt_sound
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 from ..handle_sessionfile import get_qa_session_sentence
+from ..handle_userprofile import update_scores
 
 letsnext = ["Поехали дальше", "Следующий вопрос", "Очередной вопрос", "Двигаемся дальше"]
 
-def incorrectanswer(command, session_state, session_id):
+def incorrectanswer(command, session_state, user_id, session_id):
 
     sentences = get_db_sentences()
 
@@ -75,8 +76,13 @@ def incorrectanswer(command, session_state, session_id):
         question_variants = question_dict["variants"]
         variants = generate_var_string(question_variants)
 
+        # Подсчёт рейтинга и его отображение
+        score = 0
+        cur_scores = update_scores(user_id, session_id, score)
+        cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {cur_scores[0]}\nТекущий: {cur_scores[1]}'
+
         response: dict = {
-                'text': f'{badsentence}: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}',
+                'text': f'{badsentence}: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}{cur_rating}',
                 'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letnext}: sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
