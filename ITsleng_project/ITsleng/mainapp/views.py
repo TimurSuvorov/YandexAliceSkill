@@ -6,6 +6,7 @@ import re
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from mainapp.processing.handle_userprofile import check_and_create_profile
 from mainapp.processing.handlers.fucking_replies import fucking_replies
 from mainapp.processing.handlers.many_words import many_words
 from mainapp.processing.handlers.question_on_question_replies import question_on_question_replies
@@ -29,12 +30,13 @@ def anchorhandler(event):
     event: dict = rapidjson.load(event)
     command: str = event['request']['command']
     original_utterance: str = event['request']['original_utterance']
-    sessionuser_id = event['session']['user']['user_id']
+    user_id = event['session']['user']['user_id']
     session_id = event['session']['session_id']
     session_state = event['state']['session']
     nlu_tokens = event['request']["nlu"]['tokens']
     intents = event['request']['nlu']['intents']
     print(f'>>{session_state.get("question_dict", {}).get("sentence", {})}\n<<{original_utterance}')
+
 
     # Обработка нового входа
     if event['session']['new']:
