@@ -47,7 +47,7 @@ def check_and_add_new_session(user_id, session_id):
         with open(full_file_path, "w+", encoding="utf-8") as userprofile:
             userprofile.write(rapidjson.dumps(userdata, indent=4))
 
-    print(f'Add new session {user_id[-10:]}:{session_id[-10:]}')
+        print(f'Add new session {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
 
 
