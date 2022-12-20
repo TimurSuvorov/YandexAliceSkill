@@ -47,7 +47,7 @@ def check_and_add_new_session(user_id, session_id):
         with open(full_file_path, "w+", encoding="utf-8") as userprofile:
             userprofile.write(rapidjson.dumps(userdata, indent=4))
 
-        print(f'Add new session {user_id[-10:]}:{session_id[-10:]}')
+        # print(f'Add new session {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
 
 
@@ -65,13 +65,12 @@ def update_scores(user_id, session_id, score):
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
         userprofile.write(rapidjson.dumps(userdata, indent=4))
 
-    print(f'Scores updated {user_id[-10:]}:{session_id[-10:]}')
+    # print(f'Scores updated {user_id[-10:]}:{session_id[-10:]}')
     return userdata["allscores"], userdata[session_id]["scores"]
 
 
 def update_time_end(user_id, session_id):
     full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
-    # Читаем содержимое JSON
     with open(full_file_path, "r", encoding="utf-8") as userprofile:
         userdata = rapidjson.load(userprofile)
 
@@ -91,8 +90,21 @@ def update_time_end(user_id, session_id):
     with open(full_file_path, "w+", encoding="utf-8") as userprofile:
         userprofile.write(rapidjson.dumps(userdata, indent=4))
 
-    print(f'Last_time updated {user_id[-10:]}:{session_id[-10:]}')
+    # print(f'Last_time updated {user_id[-10:]}:{session_id[-10:]}')
     return full_file_path
+
+
+def get_scores_rating(user_id, session_id):
+    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    with open(full_file_path, "r", encoding="utf-8") as userprofile:
+        userdata = rapidjson.load(userprofile)
+
+    allscores = userdata["allscores"]
+    sessionscore = userdata[session_id]["scores"]
+
+    return {"allscores": allscores,
+            "sessionscore": sessionscore
+            }
 
 if __name__ == '__main__':
     user_id = 'D7F19A5927029C89800AC348D6764786EC3F63C084FF7371CB87C3FBDAA37F56'

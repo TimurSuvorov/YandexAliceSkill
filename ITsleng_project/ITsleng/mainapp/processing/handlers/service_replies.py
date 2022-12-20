@@ -11,7 +11,7 @@ def hi_replies(session_id) -> dict:
     create_session_file(session_id)
     # Фраза приветствия
     sentences = get_db_sentences()
-    hi_text = sentences["HIsentence"]
+    hi_text = sentences["HIsentence_newuser"]
 
     # Выбираем звуки
     sounds = get_db_sounds()
@@ -41,7 +41,6 @@ def hi_replies(session_id) -> dict:
 
 
 def bye_replies(session_state, session_id):
-    remove_session_file(session_id)
 
     sentences = get_db_sentences()
     bye_text = random.choice(sentences["BYEsentence"])
@@ -55,7 +54,6 @@ def bye_replies(session_state, session_id):
             'tts': f'{bye_text} {byesound}',
             'end_session': 'True'
     }
-
 
     return {
         "response": response,
