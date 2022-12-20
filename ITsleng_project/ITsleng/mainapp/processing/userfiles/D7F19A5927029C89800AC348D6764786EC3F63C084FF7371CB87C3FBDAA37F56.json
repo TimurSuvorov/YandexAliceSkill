@@ -1,0 +1,17 @@
+{
+    "user_id": "D7F19A5927029C89800AC348D6764786EC3F63C084FF7371CB87C3FBDAA37F56",
+    "user_name": null,
+    "allscores": 6,
+    "dea07bfc-eef6-4a45-be88-394f2c95afb0": {
+        "time_st": "2022-12-20 12:50:04.294257",
+        "time_end": "2022-12-20 12:50:22.795827",
+        "time_session": 18.50157,
+        "scores": 0
+    },
+    "3c06de4f-4b8d-4d8c-8481-60fef893481f": {
+        "time_st": "2022-12-20 12:50:37.357915",
+        "time_end": "2022-12-20 12:55:01.220122",
+        "time_session": 263.862207,
+        "scores": 6
+    }
+}
