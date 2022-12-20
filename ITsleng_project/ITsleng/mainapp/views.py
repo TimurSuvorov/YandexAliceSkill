@@ -33,6 +33,7 @@ def anchorhandler(event):
     original_utterance: str = event['request']['original_utterance']
     user_id = event['session']['user']['user_id']
     session_id = event['session']['session_id']
+    message_id = event['session']['message_id']
     session_state = event['state']['session']
     nlu_tokens = event['request']["nlu"]['tokens']
     intents = event['request']['nlu']['intents']
@@ -90,7 +91,7 @@ def anchorhandler(event):
     else:
         # Здесь должен остаться только вариант с вопросом внутри - его обрабатываем дальше
         print('14#')
-        response_dict = checkanswer(command, session_state, user_id, session_id)
+        response_dict = checkanswer(command, session_state, user_id, session_id, message_id)
 
     resp_data = {
         'version': event['version'],

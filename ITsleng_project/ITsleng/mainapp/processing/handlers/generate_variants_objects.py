@@ -5,7 +5,7 @@ def generate_var_buttons(question_variants) -> list:
     buttons_list = []
 
     for var in question_variants:
-        buttons_list.append({'title': f'⚡{var.capitalize().replace("+", "")}', 'hide': 'true'})
+        buttons_list.append({'title': f'⚡{var.replace("+", "").capitalize()}', 'hide': 'true'})
         random.shuffle(buttons_list)
     buttons_list.append({'title': "🤔Сдаюсь!", 'hide': 'true'})
     return buttons_list

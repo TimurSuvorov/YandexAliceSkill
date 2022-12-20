@@ -79,7 +79,9 @@ def incorrectanswer(command, session_state, user_id, session_id):
         # Подсчёт рейтинга и его отображение
         score = 0
         cur_scores = update_scores(user_id, session_id, score)
-        cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {cur_scores[0]}\nТекущий: {cur_scores[1]}'
+        allscores = cur_scores["allscores"]
+        sessionscore = cur_scores["sessionscore"]
+        cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {allscores}\nВ этой игре: {sessionscore}'
 
         response: dict = {
                 'text': f'{badsentence}: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}{cur_rating}',

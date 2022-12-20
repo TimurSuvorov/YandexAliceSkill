@@ -66,7 +66,9 @@ def update_scores(user_id, session_id, score):
         userprofile.write(rapidjson.dumps(userdata, indent=4))
 
     # print(f'Scores updated {user_id[-10:]}:{session_id[-10:]}')
-    return userdata["allscores"], userdata[session_id]["scores"]
+    return {"allscores": userdata["allscores"],
+            "sessionscore": userdata[session_id]["scores"]
+            }
 
 
 def update_time_end(user_id, session_id):
