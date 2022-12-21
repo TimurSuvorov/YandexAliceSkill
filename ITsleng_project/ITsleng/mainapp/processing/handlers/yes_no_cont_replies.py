@@ -8,8 +8,8 @@ from mainapp.processing.handlers.generate_variants_objects import generate_var_s
 from mainapp.processing.handlers.service_replies import bye_replies
 
 yes_answer = [r"^да$", r"\bда$", "давай", "хорошо", "я не против", "начн.м", "продолж", "начать", r"\bok$", r"^окей$",
-              r"начинаем$", r"поехали$", "продолжим", "продолжай", "дальше"]
-no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем", "не начинаем"]
+              r"начинаем$", r"поехали$", "продолжим", "продолжай", "дальше", "yes"]
+no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем", "не начинаем", "no$"]
 
 def yes_no_cont_replies(command, session_state, session_id, intents):
     sentences = get_db_sentences()
@@ -37,8 +37,8 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'Прекрасно!\n✨{question_body}\n{postsentence}:\n{variants}'.replace(" - ", "").replace("+", ""),
-            'tts': f'Прекрасно! sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
+            'text': f'Прекрасно! Мой вопрос.\n✨{question_body}\n{postsentence}:\n{variants}'.replace(" - ", "").replace("+", ""),
+            'tts': f'Прекрасно! sil <[100]> Мой вопрос. {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -69,8 +69,9 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         # До этого не было задано вопросов
         if not session_state.get("question_dict"):
             yesno_tupik_replies = random.choice(["Как-то нелогично. А я просто хочу поиграть. -  Поехали?",
-                                                 "Я очень рада за тебя. Но давай уже начнём?",
-                                                 "И где логика? -  Давай уже стартуем?"]
+                                                 "Я очень рада за сказанное тобой. Но давай уже начнём?",
+                                                 "Не вижу в этом логики. -  Давай уже стартуем?",
+                                                 "Отсутствие смысла иногда полезно, но не сейчас. Может, просто поиграем?"]
                                                 )
 
             analytics = {

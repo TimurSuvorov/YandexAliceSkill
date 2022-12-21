@@ -35,7 +35,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
                 question_variants.remove(variant)
                 postsentence = random.choice(["Остались варианты",
                                               "Вот что осталось",
-                                              "Минус один вариант",
+                                              "Осталось два варианта",
                                               "Но уже вариантов поменьше"])
 
         variants = generate_var_string(question_variants)

@@ -16,7 +16,7 @@ def question_on_question_replies(command, session_state):
                                     ])
     letstart_noempty = random.choice(["Давай повторю для тебя.",
                                       "Повторю, если забыл.",
-                                      "А мы остановились вот где.",
+                                      "Мы остановились вот где.",
                                       "Давай вернёмся к нашим баранам."
                                     ])
 

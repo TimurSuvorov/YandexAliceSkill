@@ -20,10 +20,11 @@ from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 exit_light = ["нет", "не хочу", "закончим", "не начнём", "хватит", "выйди", "выход", "стоп", "все пока", "всё пока",
               "я ухожу"]
 exit_hard = ["не хочу играть", "все надоело", "закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу",
-             "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$", "стоп", "выйду$"]
+             "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$", "стоп", "выйду$", r"бай\b",
+             "гудбай", "goodbye"]
 rules = ["правила", "помощь", "помоги", "help"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь", "еще можешь"]
-dont_know = ["не знаю", "дальше", "сдаюсь", r"ответ$", "новый вопрос", "откуда мне знать", "следующий вопрос", "следующий$"]
+dont_know = ["не знаю", r"^дальше$", "сдаюсь", r"ответ$", "новый вопрос", "откуда мне знать", "следующий вопрос", "следующий$"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал", "еще раз", "повтори", "не услышал"]
 
 
@@ -63,6 +64,10 @@ def anchorhandler(event):
     elif "*" in nlu_tokens:
         print('6#')
         response_dict = fucking_replies(command, session_state)
+    # Обработка требования выхода
+    elif re.search("|".join(exit_hard), command):
+        print('12#')
+        response_dict = bye_replies(session_state, session_id)
     # Обработка сообщений "вопрос на вопрос"
     elif intents.get('question_1', {}):
         print('7#')
@@ -84,10 +89,6 @@ def anchorhandler(event):
             not (intents.get('YANDEX.CONFIRM', {}) or intents.get('YANDEX.REJECT', {})):
         print('11#')
         response_dict = many_words(command, session_state)
-    # Обработка требования выхода
-    elif re.search("|".join(exit_hard), command):
-        print('12#')
-        response_dict = bye_replies(session_state, session_id)
     # Обработка запрос с мнимыми ответами Да/Нет
     elif session_state.get("yesno_type"):
         print('13#')

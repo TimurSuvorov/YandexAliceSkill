@@ -13,9 +13,11 @@ def hi_replies(user_id, session_id) -> dict:
     # Фраза приветствия
     sentences = get_db_sentences()
     if check_old_user(user_id, session_id):
-        hi_text = sentences["HIsentence_olduser"]
+        hi_text = sentences["HIsentence_olduser"]["text"]
+        hi_tts = sentences["HIsentence_olduser"]["tts"]
     else:
-        hi_text = sentences["HIsentence_newuser"]
+        hi_text = sentences["HIsentence_newuser"]["text"]
+        hi_tts = sentences["HIsentence_newuser"]["tts"]
 
     # Выбираем звуки
     sounds = get_db_sounds()
@@ -27,7 +29,7 @@ def hi_replies(user_id, session_id) -> dict:
                 {'title': 'Правила', 'hide': 'true'},
                 {'title': 'Что ты умеешь?', 'hide': 'true'}
             ],
-            'tts': f'{startsound}{hi_text}',
+            'tts': f'{startsound}{hi_tts}',
             'end_session': 'false'
     }
     sessionstate = {'service': 11, 'yesno_type': 10}
