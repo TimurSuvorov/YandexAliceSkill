@@ -7,7 +7,8 @@ from mainapp.processing.handlers.generate_question import generate_question, tts
 from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
 from mainapp.processing.handlers.service_replies import bye_replies
 
-yes_answer = [r"^да$", r"\bда$", "давай", "хорошо", "я не против", "начн.м", "продолж", "начать", r"\bok$", r"^окей$", r"начинаем$", r"поехали$"]
+yes_answer = [r"^да$", r"\bда$", "давай", "хорошо", "я не против", "начн.м", "продолж", "начать", r"\bok$", r"^окей$",
+              r"начинаем$", r"поехали$", "продолжим", "продолжай", "дальше"]
 no_answer = ["нет", "не хочу", "потом", "выйти", "выход", "хватит", "давай, не будем", "не будем", "не начинаем"]
 
 def yes_no_cont_replies(command, session_state, session_id, intents):
@@ -36,7 +37,7 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'Прекрасно!\n✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': f'Прекрасно!\n✨{question_body}\n{postsentence}:\n{variants}'.replace(" - ", "").replace("+", ""),
             'tts': f'Прекрасно! sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

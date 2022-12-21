@@ -1,0 +1,17 @@
+{
+    "user_id": "2170DB59209CAF4FA50C102C6177BBBD0D4FD26CEBD3B7088D49FEBA5E6AD27E",
+    "user_name": null,
+    "allscores": 38,
+    "b9444e3e-a358-44ce-8ea8-f1af4e2096c4": {
+        "time_st": "2022-12-21 11:55:41.080288",
+        "time_end": "2022-12-21 12:00:54.079752",
+        "time_session": 312.999464,
+        "scores": 16
+    },
+    "3b7732da-11a4-411b-8c8c-8e00f733d7f3": {
+        "time_st": "2022-12-21 12:03:14.145209",
+        "time_end": "2022-12-21 12:09:15.846640",
+        "time_session": 361.701431,
+        "scores": 22
+    }
+}

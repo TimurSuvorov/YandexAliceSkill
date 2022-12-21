@@ -9,6 +9,17 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 USERFOLDER = os.path.join(cur_dir, 'userfiles')
 
 
+def check_old_user(user_id, session_id):
+    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    # Читаем содержимое JSON
+    with open(full_file_path, "r", encoding="utf-8") as userprofile:
+        userdata = rapidjson.load(userprofile)
+
+    if len(userdata) > 4:
+        return True
+    return False
+
+
 def check_and_create_profile(user_id, session_id):
     full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
     profile_exist = os.path.isfile(full_file_path)
@@ -17,7 +28,6 @@ def check_and_create_profile(user_id, session_id):
             "user_id": user_id,
             "user_name": None,
             "allscores": 0,
-            session_id: {}
         }
         default_content_json = rapidjson.dumps(default_content, indent=4)
         # запись данных JSON в файл
