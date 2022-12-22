@@ -11,7 +11,7 @@ def next_question(session_id) -> dict:
     question_dict = get_qa_session_sentence(session_id)
     # Из вопроса-словаря берем сам вопрос
     question_body = question_dict["sentence"]
-    question_variants = question_dict["variants"]
+    question_variants = question_dict["variants"][:3]
 
     # Выбираем фразу про варианты
     sentences = get_db_sentences()

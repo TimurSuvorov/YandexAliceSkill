@@ -20,6 +20,7 @@ stupid_answers = [r"^да+", "да уж", "ништяк", "^нет", "^ой", "�
 '''
 
 def checkanswer(command, session_state, user_id, session_id, message_id):
+
     # Проверка есть ли предыдущий вопрос (session_state={"question_dict": {}})
     # или сообщение было сервисное (session_state={"service": 11})
     if not session_state.get('question_dict', {}).get('answers') or \
@@ -27,12 +28,17 @@ def checkanswer(command, session_state, user_id, session_id, message_id):
         # Генерируем новый вопрос
         response_dict = next_question(session_id)
         return response_dict
-    # Проверка на явно тупые ответы
-    elif re.search("|".join(stupid_answers), command):
+
+    # Формирование списка вариантов+ответов для проверки вне вариантов
+    print(session_state["question_dict"]["variants"])
+    all_variants_temp = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]
+    all_variants_clear = [i.replace("+", "") for i in all_variants_temp]
+    if not re.search("|".join(all_variants_clear), command):
         # Берем ранее озвученный вопрос и добавляем фразу
         response_dict = stupid_replies(command, session_state)
         return response_dict
 
+    # В остальных случаях
     if iscorrectanswer(command, session_state):
         # Генерируем новый вопрос для создания ответа в формате для случая "успеха пользователя"
         response_dict = correctanswer(command, session_state, user_id, session_id, message_id)

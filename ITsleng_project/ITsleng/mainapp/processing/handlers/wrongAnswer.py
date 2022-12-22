@@ -27,7 +27,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
         # Сам вопрос оставляем в session_state
         question_dict = session_state["question_dict"]
         # Генерируем кнопки
-        question_variants = question_dict["variants"]
+        question_variants = question_dict["variants"][:3]
 
         # Удаляем из вариантов, если был назван оттуда. Подставляем другу фразу
         for variant in question_variants:
@@ -73,7 +73,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
         # Из вопроса-словаря берем сам вопрос для подстановки в ответ
         question_body = question_dict["sentence"]
         # Генерируем кнопки для нового вопроса
-        question_variants = question_dict["variants"]
+        question_variants = question_dict["variants"][:3]
         variants = generate_var_string(question_variants)
 
         # Подсчёт рейтинга и его отображение

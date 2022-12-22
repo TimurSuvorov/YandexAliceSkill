@@ -11,16 +11,18 @@ def stupid_replies(command, session_state):
 
     question_dict = session_state["question_dict"]
     question_body = question_dict["sentence"]
-    question_variants = question_dict["variants"]
+    question_variants = question_dict["variants"][:3]
     variants = generate_var_string(question_variants)
 
-    stupid_phrases = ["Вр+оде, умный, а говоришь не впоп+ад. Дав+ай ещё раз.",
-                      "Неож+иданный ответ. Попробуй сказать поразборчивей."
+    stupid_phrases = ["Вр+оде, умный, а говоришь не впоп+ад. Дав+ай ещё раз и поразборчевей. Повторю вопросик.",
+                      "Неож+иданный ответ. Попробуй сказать поразборчивей. Напомню вопрос и ответы.",
+                      "Тут даже нет таких вариантов или мне показалось. Давай еще раз.",
+                      "Интересный вариант ответа. Наверное, ты перепутал с другим вопросом. А мой был следующим."
                       ]
     stupid_phrase = random.choice(stupid_phrases)
 
     response: dict = {
-        'text': f'{stupid_phrase.replace(" - ", "").replace("+", "")}\n✨{question_body.replace(" - ", "").replace("+", "")}.\n{postsentence}:\n {variants.replace("+", "")}',
+        'text': f'{stupid_phrase}\n✨{question_body}\n{postsentence}:\n {variants}'.replace(" - ", "").replace("+", ""),
         'tts': f'{stupid_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
         'buttons': generate_var_buttons(question_variants),
         'end_session': 'False'

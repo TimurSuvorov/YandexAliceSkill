@@ -51,7 +51,7 @@ def many_words(command, session_state):
         question_dict = session_state['question_dict']
         question_body = question_dict['sentence']
         attempt = session_state['attempt']
-        question_variants = question_dict['variants']
+        question_variants = question_dict['variants'][:3]
         variants = generate_var_string(question_variants)
 
         response: dict = {

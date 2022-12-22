@@ -63,7 +63,7 @@ def dontknow(command, session_state, user_id, session_id):
         # Из вопроса-словаря берем сам вопрос для подстановки в ответ
         question_body = question_dict["sentence"]
         # Генерируем кнопки для нового вопроса
-        question_variants = question_dict["variants"]
+        question_variants = question_dict["variants"][:3]
 
         sounds = get_db_sounds()
         wrongsound = random.choice(sounds["WRONG"])

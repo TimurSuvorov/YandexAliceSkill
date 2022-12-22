@@ -26,14 +26,14 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             question_dict = session_state['question_dict']
             attempt = session_state['attempt']
             question_body = question_dict['sentence']
-            question_variants = question_dict['variants']
+            question_variants = question_dict['variants'][:3]
             variants = generate_var_string(question_variants)
         else:
             # Берем новый вопрос для сессии
             question_dict = get_qa_session_sentence(session_id)
             attempt = 1
             question_body = question_dict["sentence"]
-            question_variants = question_dict["variants"]
+            question_variants = question_dict["variants"][:3]
             variants = generate_var_string(question_variants)
 
         response: dict = {

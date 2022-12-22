@@ -34,7 +34,7 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
 
     # Из вопроса-словаря берем сам вопрос и варианты ответов
     question_body = question_dict["sentence"]
-    question_variants = question_dict["variants"]
+    question_variants = question_dict["variants"][:3]
     variants = generate_var_string(question_variants)
 
     # Показывать или нет объяснение при верном ответе

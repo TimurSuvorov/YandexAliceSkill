@@ -23,7 +23,7 @@ def repeat_replies(session_state: dict) -> dict:
     else:
         question_dict = session_state["question_dict"]
         question_body = question_dict["sentence"]
-        question_variants: list = question_dict["variants"]
+        question_variants: list = question_dict["variants"][:3]
         variants = generate_var_string(question_variants)
         # Проверяем признак того, что перед нами вопрос с вариантами ответов, а не сервисное
         if len(question_variants) > 0:
