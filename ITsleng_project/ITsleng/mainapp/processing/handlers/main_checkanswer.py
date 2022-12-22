@@ -30,10 +30,9 @@ def checkanswer(command, session_state, user_id, session_id, message_id):
         return response_dict
 
     # Формирование списка вариантов+ответов для проверки вне вариантов
-    print(session_state["question_dict"]["variants"])
-    all_variants_temp = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]
-    all_variants_clear = [i.replace("+", "") for i in all_variants_temp]
-    if not re.search("|".join(all_variants_clear), command):
+    all_variants = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]
+    # all_variants_clear = [i.replace("+", "") for i in all_variants_temp]
+    if not re.search("|".join(all_variants), command):
         # Берем ранее озвученный вопрос и добавляем фразу
         response_dict = stupid_replies(command, session_state)
         return response_dict
