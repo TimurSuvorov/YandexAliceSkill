@@ -32,7 +32,7 @@ def checkanswer(command, session_state, user_id, session_id, message_id):
     # Формирование списка вариантов+ответов для проверки вне вариантов
     all_variants = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]
     # all_variants_clear = [i.replace("+", "") for i in all_variants_temp]
-    if not re.search("|".join(all_variants), command):
+    if not re.search("|".join(all_variants).replace("+", ""), command):
         # Берем ранее озвученный вопрос и добавляем фразу
         response_dict = stupid_replies(command, session_state)
         return response_dict
