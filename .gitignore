@@ -1,2 +1,7 @@
 ngrok-v3-stable
-ITsleng\__pycache__
+**__pycache__
+draft.py
+venv*
+.idea
+.env
+draft.py
