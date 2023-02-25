@@ -1,7 +1,7 @@
 {
     "user_id": "E298EF0284F05AC96EC7BF263BEF227776FC73B3AFDE6D7EE58057ABDB068CC1",
     "user_name": null,
-    "allscores": 18,
+    "allscores": 29,
     "fcb48ca1-65a8-4829-b9f1-a81e51431614": {
         "time_st": "2023-02-18 12:33:24.676922",
         "time_end": "2023-02-18 12:34:13.738479",
@@ -235,5 +235,11 @@
         "time_end": "2023-02-20 07:25:57.907908",
         "time_session": 13.414726,
         "scores": 0
+    },
+    "6be71b9d-911c-44ec-889a-266d9ff21a59": {
+        "time_st": "2023-02-21 15:54:33.353103",
+        "time_end": "2023-02-21 17:10:48.227873",
+        "time_session": 4574.87477,
+        "scores": 11
     }
 }

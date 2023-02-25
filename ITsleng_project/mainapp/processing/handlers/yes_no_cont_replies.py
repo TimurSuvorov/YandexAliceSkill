@@ -22,7 +22,7 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             - отрицательный ответ;
                 Производится выход
             - не распознан;
-                Призыв продолжить в форме закрытого вопроса
+                Нейтральная фраза и призыв продолжить в форме закрытого вопроса
 
         - в начале игры (пользователь ещё не слышал вопроса);
             - положительный ответ;
@@ -30,13 +30,13 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             - отрицательный ответ;
                 Производится выход
             - не распознан;
-                Призыв начать в форме закрытого вопроса
+                Нейтральная фраза и призыв начать в форме закрытого вопроса
     """
     sentences = get_db_sentences()
     postsentence = random.choice(sentences["POSTsentence"])
     analytics = {}
 
-    # Если ответ положительный и точно неотрицательный, то
+    # Если ответ положительный и точно неотрицательный и не проходящий по интентам, то
     if (re.search("|".join(yes_answer), command) or intents.get('YANDEX.CONFIRM', {})) and \
             not intents.get('YANDEX.REJECT', {}) and \
             not re.search("|".join(no_answer), command):
@@ -83,11 +83,11 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         response = bye_replies(session_state, session_id)["response"]
         sessionstate = session_state
 
-    # Если ответ не из списка Да/Нет, то прикинуться валенком
+    # Если ответ не распознан, то формируем нейтральную фразу
     else:
         # До этого не было задано вопросов
         if not session_state.get("question_dict"):
-            yesno_tupik_replies = random.choice(
+            norecognize_for_yesno = random.choice(
                 ["Как-то нелогично. А я просто хочу поиграть. -  Поехали?",
                  "Я очень рада за сказанное тобой. Но давай уже начнём?",
                  "Не вижу в этом логики. -  Давай уже стартуем?",
@@ -107,9 +107,9 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
                 ]
             }
 
-        # До был задан вопрос, был перерыв на сервисное сообщение
+        # До этого был задан вопрос (прерывание на сервисное сообщение)
         else:
-            yesno_tupik_replies = random.choice(
+            norecognize_for_yesno = random.choice(
                 ["Я очень рада за тебя. Продолжим?",
                  "До этого я тебя лучше понимала. Давай просто продолжим?",
                  "Тут сложно что-то прокомментировать. Может просто продолжим?",
@@ -130,8 +130,8 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             }
 
         response: dict = {
-            'text': f'{yesno_tupik_replies}'.replace(" - ", "").replace("+", ""),
-            'tts': f'{yesno_tupik_replies}',
+            'text': f'{norecognize_for_yesno}'.replace(" - ", "").replace("+", ""),
+            'tts': f'{norecognize_for_yesno}',
             'buttons': [
                 {'title': 'Да', 'hide': 'true'},
                 {'title': 'Нет', 'hide': 'true'}
@@ -143,7 +143,6 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         sessionstate = session_state
 
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
-    print("From yesno")
     return {
         "response": response,
         "analytics": analytics,

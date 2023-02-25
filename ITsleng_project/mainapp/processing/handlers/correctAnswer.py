@@ -62,7 +62,7 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
             [f'Движешься уверенно вперёд. Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
              f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. Очень неплохо!\n',
              f'Поражаюсь твоей целеустремленности. У тебя за игру {decl_scores(sessionscore)} и всего {decl_scores(allscores)}.\n',
-             f'Я верила в тебя не зря! Ты набрал {decl_scores(sessionscore)} за игру, а всего {decl_scores(allscores)}\n.'
+             f'Я верила в тебя не зря! Ты набрал {decl_scores(sessionscore)} за игру, а всего {decl_scores(allscores)}.\n'
              ]
         )
 

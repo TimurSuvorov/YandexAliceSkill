@@ -2,9 +2,6 @@ import re
 
 
 def iscorrectanswer(command, session_state):
-    # Проверка на тупые ответы
-
-
     # Из вопроса-словаря, который мы отправили ранее берём ответы.
     # Ищем совпадения вариантов ответа в отправленной команде от пользователя
     answers_list = session_state["question_dict"]["answers"]

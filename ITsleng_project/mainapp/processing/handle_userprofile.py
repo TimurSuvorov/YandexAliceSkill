@@ -96,6 +96,7 @@ def get_scores_rating(user_id: str, session_id: str) -> dict:
             "sessionscore": sessionscore
             }
 
+
 def update_scores(user_id: str, session_id: str, score: int) -> dict:
     full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
