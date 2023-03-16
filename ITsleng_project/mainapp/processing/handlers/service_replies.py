@@ -32,7 +32,7 @@ def hi_replies(user_id: str, session_id: str) -> dict:
         if int(allscores) != 0:
             rating_message += random.choice(
                 [f'Ты набрал {decl_scores(allscores)} за всё время.\n',
-                 f'Сейчас у тебя {decl_scores(allscores)} за всё.\n',
+                 f'Сейчас у тебя {decl_scores(allscores)}.\n',
                  f'У тебя всего {decl_scores(allscores)}.\n',
                  f'Ты набрал всего {decl_scores(allscores)}.\n'
                  ]

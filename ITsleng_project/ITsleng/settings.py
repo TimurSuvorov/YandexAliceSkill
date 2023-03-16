@@ -30,7 +30,7 @@ else:
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv('DJANGO_DEBUG', True))
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mainapp',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,50 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'file_errors': {
+            'format': '{asctime} | {levelname} | {message} | {pathname} | {exc_info}',
+            'style': '{'
+        },
+        'file_common': {
+            'format': '{asctime} | {levelname} | {message}',
+            'style': '{'
+        }
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'file_errors_handler': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'file_errors',
+            'filename': os.path.join('..', BASE_DIR, 'logs/errors.log')
+        },
+        'file_common_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'file_common',
+            'filename': os.path.join('..', BASE_DIR, 'logs/common.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file_errors_handler',
+                         'file_common_handler',
+                         ],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+
+    }
+}

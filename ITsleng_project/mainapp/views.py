@@ -5,19 +5,19 @@ from pprint import pprint
 import rapidjson
 import re
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .processing.handle_userprofile import check_and_create_profile, update_time_end, check_and_add_new_session
-from .processing.handlers.fucking_replies import fucking_replies
-from .processing.handlers.many_words import many_words
-from .processing.handlers.my_rating_replies import my_rating
-from .processing.handlers.question_on_question_replies import question_on_question_replies
-from .processing.handlers.service_replies import hi_replies, bye_replies, rules_replies, about_replies
-from .processing.handlers.help_dontknow_replies import dontknow
-from .processing.handlers.main_checkanswer import checkanswer
-from .processing.handlers.repeat_replies import repeat_replies
-from .processing.handlers.yes_no_cont_replies import yes_no_cont_replies
+from mainapp.processing.handle_userprofile import check_and_create_profile, update_time_end, check_and_add_new_session
+from mainapp.processing.handlers.fucking_replies import fucking_replies
+from mainapp.processing.handlers.many_words import many_words
+from mainapp.processing.handlers.my_rating_replies import my_rating
+from mainapp.processing.handlers.question_on_question_replies import question_on_question_replies
+from mainapp.processing.handlers.service_replies import hi_replies, bye_replies, rules_replies, about_replies
+from mainapp.processing.handlers.help_dontknow_replies import dontknow
+from mainapp.processing.handlers.main_checkanswer import checkanswer
+from mainapp.processing.handlers.repeat_replies import repeat_replies
+from mainapp.processing.handlers.yes_no_cont_replies import yes_no_cont_replies
 
 exit_hard = ["не хочу играть", "все надоело", "закончим", "закончить", "хватит", "выйди", "выход$", "стоп$", "не хочу",
              "выйти", "я ухожу", "мне надоело", "все пока", "всё пока", "наигралась", "^пока$", "стоп", "выйду$",
@@ -27,6 +27,10 @@ about = ["что ты умеешь", "что умеешь", "умеешь", "з�
 dont_know = ["не знаю", r"^дальше$", "сдаюсь", r"ответ$", "новый вопрос", "откуда мне знать", "следующий вопрос",
              "следующий$", r"пропус.*"]
 repeat = ["повтор", "не понял", "ещё раз", "не расслышал", "еще раз", "повтори", "не услышал", "что что", "не понимаю"]
+
+
+def echo(request):
+    return HttpResponse('Server running')
 
 
 @csrf_exempt
