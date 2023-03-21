@@ -1,3 +1,5 @@
+from time import time
+
 import rapidjson
 import os
 import random
@@ -6,6 +8,9 @@ from mainapp.processing.db.extract_json import get_db_sentences
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 SESSIONFOLDER = os.path.join(cur_dir, 'sessionfiles')
+
+TIME_1DAY_AGO = 1 * 24 * 60 * 60
+TIME_2MIN_AGO = 2 * 60
 
 
 def create_session_file(session_id) -> dict:
@@ -51,9 +56,18 @@ def get_qa_session_sentence(session_id) -> dict:
     return qa_session_sentence
 
 
+def remove_sessions_old_files(time_ago=TIME_1DAY_AGO):
+    time_now = time()
+
+    content = os.listdir(SESSIONFOLDER)
+    for file in content:
+        file_path = os.path.join(SESSIONFOLDER, file)
+        time_cr = os.stat(file_path).st_ctime
+        if (time_now - time_cr) > time_ago:
+            os.remove(file_path)
+            print(f'File: "{file}" deleted')
+
 
 
 if __name__ == '__main__':
-    session_id = "5ce4727d-47d2-453b-8383-1db65f25bd30"
-    # r1 = create_session_file(session_id)
-    # r2 = get_qa_session_sentence(session_id)
+    remove_sessions_old_files(TIME_1DAY_AGO)
