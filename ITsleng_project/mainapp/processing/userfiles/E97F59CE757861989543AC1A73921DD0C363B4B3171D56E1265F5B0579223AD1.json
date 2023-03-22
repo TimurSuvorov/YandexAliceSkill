@@ -1,12 +1,12 @@
 {
     "user_id": "E97F59CE757861989543AC1A73921DD0C363B4B3171D56E1265F5B0579223AD1",
     "user_name": null,
-    "allscores": 7,
+    "allscores": 29,
     "52cebe97-75aa-487d-92ef-1ff2230a8c6a": {
         "time_st": "2022-12-21 15:15:58.390586",
         "time_end": "2022-12-21 15:19:27.182086",
         "time_session": 208.7915,
-        "scores": 0
+        "scores": 22
     },
     "16d21a75-01a6-4323-bd18-5fe53518d5dd": {
         "time_st": "2022-12-21 15:19:50.788859",

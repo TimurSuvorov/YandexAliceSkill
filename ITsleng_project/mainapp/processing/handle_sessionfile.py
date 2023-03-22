@@ -1,4 +1,5 @@
 from time import time
+from typing import TypeVar
 
 import rapidjson
 import os
@@ -6,14 +7,16 @@ import random
 
 from mainapp.processing.db.extract_json import get_db_sentences
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-SESSIONFOLDER = os.path.join(cur_dir, 'sessionfiles')
+PathLike = TypeVar("PathLike", str, os.PathLike)
+
+cur_dir: PathLike = os.path.dirname(__file__)
+SESSIONFOLDER: PathLike = os.path.join(cur_dir, 'sessionfiles')
 
 TIME_1DAY_AGO = 1 * 24 * 60 * 60
 TIME_2MIN_AGO = 2 * 60
 
 
-def create_session_file(session_id) -> dict:
+def create_session_file(session_id: str) -> dict:
     """
     Функция запрашивает имеющийся список всех вопросов, перемешивает и
     записывает их в созданный здесь же файл для сессии в ./sessionfiles.
@@ -31,14 +34,17 @@ def create_session_file(session_id) -> dict:
 
 
 def remove_session_file(session_id):
+    """
+    Функция удаляет файл сессии по его идентификатору
+    """
     full_file_path = os.path.join(SESSIONFOLDER, f'{session_id}.json')
     os.remove(full_file_path)
 
 
 def get_qa_session_sentence(session_id) -> dict:
-    '''
+    """
     Функция берет первый вопрос и ставит его в конце. Отдаёт следующий как новый вопрос.
-    '''
+    """
     full_file_path = os.path.join(SESSIONFOLDER, f'{session_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, 'r', encoding="utf-8") as fp:
@@ -56,17 +62,17 @@ def get_qa_session_sentence(session_id) -> dict:
     return qa_session_sentence
 
 
-def remove_sessions_old_files(time_ago=TIME_1DAY_AGO):
+def remove_sessions_old_files(time_ago):
+    """
+    Функция удаляет файлы сессии старее, чем `time_ago`.
+    """
     time_now = time()
-
-    content = os.listdir(SESSIONFOLDER)
-    for file in content:
-        file_path = os.path.join(SESSIONFOLDER, file)
-        time_cr = os.stat(file_path).st_ctime
+    files = os.listdir(SESSIONFOLDER)
+    files = [os.path.join(SESSIONFOLDER, file) for file in files]
+    for file in files:
+        time_cr = os.stat(file).st_ctime
         if (time_now - time_cr) > time_ago:
-            os.remove(file_path)
-            print(f'File: "{file}" deleted')
-
+            os.remove(file)
 
 
 if __name__ == '__main__':

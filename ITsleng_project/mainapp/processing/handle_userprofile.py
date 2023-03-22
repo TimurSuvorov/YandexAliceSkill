@@ -1,13 +1,16 @@
 import datetime
 import json
+from typing import TypeVar
+
 import rapidjson
 import os
 import time
 import logging
-from pprint import pprint
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-USERFOLDER = os.path.join(cur_dir, 'userfiles')
+PathLike = TypeVar("PathLike", str, os.PathLike)
+
+cur_dir: PathLike = os.path.dirname(__file__)
+USERFOLDER: PathLike = os.path.join(cur_dir, 'userfiles')
 
 
 # # Logging for new users
@@ -19,17 +22,17 @@ USERFOLDER = os.path.join(cur_dir, 'userfiles')
 # new_user_logger.addHandler(new_user_handler)
 
 
-def check_old_user(user_id: str, session_id: str):
+def check_old_user(user_id: str, session_id: str) -> bool:
     """
     Функция открывает профайл пользователя и по количеству ключей проверяет новый пользователь или нет.
     Если ключей больше 4 (исходный сет значений[3] + запись текущей сессии[1])
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
 
     try:
         with open(full_file_path, "r", encoding="utf-8") as userprofile:
-            userdata = rapidjson.load(userprofile)
+            userdata: dict = json.load(userprofile)
         if len(userdata) > 4:
             return True
         return False
@@ -37,13 +40,13 @@ def check_old_user(user_id: str, session_id: str):
         return False
 
 
-def check_and_create_profile(user_id: str, session_id: str):
+def check_and_create_profile(user_id: str, session_id: str) -> None:
     """
     Функция проверяет наличие профайла пользователя в ./userfiles и создает
     словарь с исходными значений, если пользователь новый.
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
-    profile_exist = os.path.isfile(full_file_path)
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
+    profile_exist: bool = os.path.isfile(full_file_path)
     time_st = datetime.datetime.utcnow()
     if not profile_exist:
         userprofile_content = {
@@ -64,17 +67,17 @@ def check_and_create_profile(user_id: str, session_id: str):
         # new_user_logger.info(f'{user_id[-10:]} added')
 
 
-def check_and_add_new_session(user_id: str, session_id: str):
+def check_and_add_new_session(user_id: str, session_id: str) -> None:
     """
     Функция открывает профайл пользователя и создает словарь с исходными значениями по сессии.
     Должна следовать после выполнения функции check_and_create_profile(),
     но в случая исключения (FileNotFoundError) ссылается на ее повторное выполнение.
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
     # Читаем содержимое JSON
     try:
         with open(full_file_path, "r", encoding="utf-8") as userprofile:
-            userdata = rapidjson.load(userprofile)
+            userdata: dict = rapidjson.load(userprofile)
     except FileNotFoundError:
         check_and_create_profile(user_id, session_id)
 
@@ -98,12 +101,12 @@ def get_scores_rating(user_id: str, session_id: str) -> dict:
     ключ-значениями общего счёта и счёта за сессию. В случая исключения (FileNotFoundError) файл пользователя
     пересоздается, а баллы отдаются нулевые.
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
     try:
         with open(full_file_path, "r", encoding="utf-8") as userprofile:
-            userdata = rapidjson.load(userprofile)
-            allscores = userdata["allscores"]
-            sessionscore = userdata[session_id]["scores"]
+            userdata: dict = rapidjson.load(userprofile)
+            allscores: int = userdata["allscores"]
+            sessionscore: int = userdata[session_id]["scores"]
     except FileNotFoundError:
         check_and_create_profile(user_id, session_id)
         allscores = 0
@@ -119,16 +122,16 @@ def update_scores(user_id: str, session_id: str, score: int) -> dict:
     Функция открывает файл пользователя и обновляет балы общие и за сессию.
     В случая исключения (FileNotFoundError) файл пользователя пересоздается, а баллы отдаются нулевые.
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
 
     try:
         with open(full_file_path, "r", encoding="utf-8") as userprofile:
-            userdata = rapidjson.load(userprofile)
+            userdata: dict = rapidjson.load(userprofile)
 
         userdata["allscores"] += score
         userdata[session_id]["scores"] += score
-        allscores = userdata["allscores"]
-        sessionscore = userdata[session_id]["scores"]
+        allscores: int = userdata["allscores"]
+        sessionscore: int = userdata[session_id]["scores"]
 
         with open(full_file_path, "w+", encoding="utf-8") as userprofile:
             userprofile.write(rapidjson.dumps(userdata, indent=4))
@@ -148,10 +151,10 @@ def update_time_end(user_id: str, session_id: str) -> None:
     Функция открывает файл пользователя и обновляет время за сессию на основе время старта сессии.
     В случая исключения (FileNotFoundError) файл пользователя пересоздается
     """
-    full_file_path = os.path.join(USERFOLDER, f'{user_id}.json')
+    full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
     try:
         with open(full_file_path, "r", encoding="utf-8") as userprofile:
-            userdata = rapidjson.load(userprofile)
+            userdata: dict = rapidjson.load(userprofile)
 
         # Обрабатываем содержимое
         time_end = datetime.datetime.utcnow()
@@ -159,8 +162,8 @@ def update_time_end(user_id: str, session_id: str) -> None:
 
         FORMAT = '%Y-%m-%d %H:%M:%S.%f'
         time_st = datetime.datetime.strptime(userdata[session_id]["time_st"], FORMAT)
-        time_end = datetime.datetime.strptime(userdata[session_id]["time_end"], FORMAT)
-        time_session = (time_end - time_st).total_seconds()
+        time_end: datetime.datetime = datetime.datetime.strptime(userdata[session_id]["time_end"], FORMAT)
+        time_session: float = (time_end - time_st).total_seconds()
 
         userdata[session_id]["time_session"] = time_session
 
