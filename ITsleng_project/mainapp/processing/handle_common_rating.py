@@ -1,7 +1,7 @@
 import os
 from operator import itemgetter
 from time import time
-from typing import TypeVar, List, Dict
+from typing import TypeVar, List, Dict, Tuple
 
 import rapidjson
 
@@ -44,14 +44,51 @@ def collect_common_rating() -> None:
     for file in userfiles_for_collect:
         try:
             with open(file, "r", encoding="utf-8") as userfile_fp:
-                userfile_data: dict = rapidjson.load(userfile_fp)
+                userfile_data: Dict = rapidjson.load(userfile_fp)
                 user_id, userscore = itemgetter("user_id", "allscores")(userfile_data)
                 common_rating_result[user_id] = userscore
         except (KeyError, FileNotFoundError):
             pass
+    common_rating_result_sorted: Dict[str, int] = dict(sorted(common_rating_result.items(),
+                                                              key=lambda item: item[1],
+                                                              reverse=True)
+                                                       )
     with open(COMMON_RATING_FILE, "w", encoding="utf-8") as common_rating_fp:
-        common_rating_fp.write(rapidjson.dumps(common_rating_result, indent=4))
+        common_rating_fp.write(rapidjson.dumps(common_rating_result_sorted, indent=4))
+
+
+def get_user_common_rating_info(user_id: str) -> Tuple[List[int], str]:
+    """
+    Функция получает информацию о месте в общем рейтинге и количество балов для пользователя.
+    Также формирует таблицу рейтинга.
+    """
+    with open(COMMON_RATING_FILE, "r", encoding="utf-8") as com_rat_fp:
+        com_rat_data: dict = rapidjson.load(com_rat_fp)
+    # Находим место в общем рейтинге из упорядоченного словаря по позиции
+    usersid_list: List[str] = list(com_rat_data.keys())
+    usersid_scores_list: List[Tuple[str, int]] = list(com_rat_data.items())
+    user_place_score: List[int] = [usersid_list.index(user_id) + 1, com_rat_data.get(user_id)]
+
+    # Формирование таблицы рейтинга
+    rating_table_print: str = "Таблица рейтинга:"
+    for index, userid_scores in enumerate(usersid_scores_list[:3]):
+        rating_table_print += f'\n{index + 1}-е место: {userid_scores[1]}'
+        if userid_scores[0] == user_id:
+            rating_table_print += " 👈"
+
+    if user_place_score[0] == 4:
+        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+    if user_place_score[0] == 5:
+        rating_table_print += f'\n4-е место: {usersid_scores_list[3][1]}'
+        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+    if user_place_score[0] > 5:
+        rating_table_print += f'\n...\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+    rating_table_print += "\n..."
+    return user_place_score, rating_table_print
 
 
 if __name__ == '__main__':
-    collect_common_rating()
+    user_id = 'E298EF0284F05AC96EC7BF263BEF227776FC73B3AFDE6D7EE58057ABDB068CC1'
+    print(get_user_common_rating_info(user_id))
+    print(get_user_common_rating_info(user_id)[0])
+    print(get_user_common_rating_info(user_id)[1])
