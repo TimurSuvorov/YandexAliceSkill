@@ -19,6 +19,7 @@ stupid_answers = [r"^да+", "да уж", "ништяк", "^нет", "^ой", "�
 }
 '''
 
+
 def checkanswer(command, session_state, user_id, session_id, message_id):
 
     # Проверка есть ли предыдущий вопрос (session_state={"question_dict": {}})

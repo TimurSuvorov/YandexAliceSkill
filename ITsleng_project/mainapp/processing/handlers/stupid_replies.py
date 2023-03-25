@@ -15,12 +15,12 @@ def stupid_replies(command, session_state):
     variants = generate_var_string(question_variants)
 
     stupid_phrases = ["Вр+оде, умный, а говоришь не впоп+ад. Дав+ай ещё раз и поразборчивей. Повторю вопросик.",
-                      "Неож+иданный ответ. Попробуй сказать поразборчивей. Напомню вопрос и ответы.",
+                      "Неож+иданный ответ. Попробуй сказать поразб+орчивей. Напомню вопрос и варианты.",
                       "Тут даже нет таких вариантов или мне показалось. Давай еще раз.",
-                      "Интересный вариант ответа. Наверное, ты перепутал с другим вопросом. А мой был следующий."
+                      "Интересный вариант ответа. Наверное, ты перепутал с другим вопросом. А мой был следующий.",
+                      "Ты ув+ерен, что это ответ на м+ой вопрос? Давай попробуй ещё раз."
                       ]
     stupid_phrase = random.choice(stupid_phrases)
-
     response: dict = {
         'text': f'{stupid_phrase}\n✨{question_body}\n{postsentence}:\n {variants}'.replace(" - ", "").replace("+", ""),
         'tts': f'{stupid_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',

@@ -98,8 +98,8 @@ def anchorhandler(event):
     elif session_state.get("yesno_type"):
         print('13# - закрытый вопрос')
         response_dict = yes_no_cont_replies(command, session_state, session_id, intents)
+    # Здесь должен остаться только вариант с вопросом внутри - его обрабатываем дальше
     else:
-        # Здесь должен остаться только вариант с вопросом внутри - его обрабатываем дальше
         print('14#')
         response_dict = checkanswer(command, session_state, user_id, session_id, message_id)
 
@@ -111,6 +111,6 @@ def anchorhandler(event):
         'analytics': response_dict.get("analytics", {})
     }
 
-    update_time_end(user_id, session_id)  # Score develop
+    update_time_end(user_id, session_id)
 
     return JsonResponse(resp_data)

@@ -1,7 +1,7 @@
 import collections
 from time import time, perf_counter
 
-from typing import TypeVar
+from typing import TypeVar, Deque, List, Dict
 
 import rapidjson
 import os
@@ -35,26 +35,28 @@ def create_session_file(session_id: str) -> dict:
     return sentences
 
 
-def remove_session_file(session_id):
+def remove_session_file(session_id: str) -> None:
     """
     Функция удаляет файл сессии по его идентификатору
     """
-    full_file_path = os.path.join(SESSIONFOLDER, f'{session_id}.json')
+    full_file_path: PathLike = os.path.join(SESSIONFOLDER, f'{session_id}.json')
     os.remove(full_file_path)
 
 
-def get_qa_session_sentence(session_id) -> dict:
+def get_qa_session_sentence(session_id: str) -> dict:
     """
     Функция берет первый вопрос и ставит его в конце. Отдаёт следующий как новый вопрос.
     """
     full_file_path = os.path.join(SESSIONFOLDER, f'{session_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, 'r', encoding="utf-8") as fp:
-        qa_session_sentences: list = rapidjson.load(fp)
+        qa_session_sentences: Deque = collections.deque(rapidjson.load(fp))
     # Берет первый в списке вопрос
-    qa_session_sentence = qa_session_sentences.pop(0)
+    qa_session_sentence: Dict = qa_session_sentences.popleft()
     # Записывает его в конец
     qa_session_sentences.append(qa_session_sentence)
+    # Перевод из структуры deque в list
+    qa_session_sentences: List = list(qa_session_sentences)
     # Перезаписываем содержимое
     with open(full_file_path, "w", encoding="utf-8") as newfp:
         rapidjson.dump(qa_session_sentences, newfp, ensure_ascii=False)
@@ -62,21 +64,16 @@ def get_qa_session_sentence(session_id) -> dict:
     return qa_session_sentence
 
 
-def remove_sessions_old_files(time_ago):
+def remove_sessions_old_files(time_ago: int):
     """
     Функция удаляет файлы сессии старее, чем `time_ago`.
     """
     time_now = time()
-    files = os.listdir(SESSIONFOLDER)
+    files: List[str] = os.listdir(SESSIONFOLDER)
     files = [os.path.join(SESSIONFOLDER, file) for file in files]
     for file in files:
-        time_cr = os.stat(file).st_ctime
+        time_cr: float = os.stat(file).st_ctime
         if (time_now - time_cr) > time_ago:
             os.remove(file)
 
 
-
-
-
-if __name__ == '__main__':
-    get_qa_session_sentence('780b15c4-be75-480c-b30e-1973a43a83df')
