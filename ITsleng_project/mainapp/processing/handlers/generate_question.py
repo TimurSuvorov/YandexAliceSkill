@@ -1,5 +1,7 @@
 import random
+import re
 from pprint import pprint
+
 
 from mainapp.processing.db.extract_json import get_db_sentences
 
@@ -20,16 +22,15 @@ def tts_prompt_sound(question_body):
 def remove_tts_symbols(instance: str):
     if "+" in instance or " - " in instance:
         instance = instance.replace(" - ", "").replace("+", "")
+    if "sil" in instance:
+        instance = re.sub(r"(sil <\[\d{1,3}\]>)", "", instance)
     return instance
 
 
 if __name__ == '__main__':
-    s = " - +Оффер – это значит предложить. С предложениями надо быть аккуратнее."
+    s = "Ты пе+рвый в общем рейтинге! Только вперед! sil <[70]>Продолжим?"
     r = remove_tts_symbols(s)
     print(r)
-
-
-
 
 
 if __name__ == '__main__':

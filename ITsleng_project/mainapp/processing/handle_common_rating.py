@@ -74,15 +74,15 @@ def get_user_common_rating_info(user_id: str) -> Tuple[List[int], str]:
     for index, userid_scores in enumerate(usersid_scores_list[:3]):
         rating_table_print += f'\n{index + 1}-е место: {userid_scores[1]}'
         if userid_scores[0] == user_id:
-            rating_table_print += " 👈"
+            rating_table_print += " 👈👈"
 
     if user_place_score[0] == 4:
-        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈👈'
     if user_place_score[0] == 5:
         rating_table_print += f'\n4-е место: {usersid_scores_list[3][1]}'
-        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+        rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈👈'
     if user_place_score[0] > 5:
-        rating_table_print += f'\n...\n{user_place_score[0]}-е место: {user_place_score[1]} 👈'
+        rating_table_print += f'\n...\n{user_place_score[0]}-е место: {user_place_score[1]} 👈👈'
     rating_table_print += "\n..."
     return user_place_score, rating_table_print
 
