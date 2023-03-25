@@ -1,7 +1,7 @@
 import random
 
 from .generate_question import tts_prompt_sound
-from ..declension_scores import decl_scores
+from ..declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from .generate_variants_objects import generate_var_buttons, generate_var_string
 from ..handle_sessionfile import get_qa_session_sentence

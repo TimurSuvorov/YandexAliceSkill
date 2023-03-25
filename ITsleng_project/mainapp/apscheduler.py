@@ -15,12 +15,14 @@ def run_apscheduler():
     scheduler.add_job(lambda: remove_sessions_old_files(time_ago=TIME_1DAY_AGO),
                       'cron',
                       hour=3,
+                      timezone='Europe/Moscow',
                       id="job_remove_sessions",
                       replace_existing=True,
                       )
     scheduler.add_job(collect_common_rating,
                       'cron',
                       second='*/2',
+                      timezone='Europe/Moscow',
                       id="collect_common_rating",
                       replace_existing=True
                       )

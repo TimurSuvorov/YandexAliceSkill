@@ -1,6 +1,6 @@
 import random
 
-from mainapp.processing.declension_scores import decl_scores
+from mainapp.processing.declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from mainapp.processing.handle_sessionfile import create_session_file
 from mainapp.processing.handle_userprofile import check_old_user, get_scores_rating

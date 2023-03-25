@@ -6,6 +6,10 @@ from mainapp.processing.handlers.generate_variants_objects import generate_var_s
 
 
 def stupid_replies(command, session_state):
+    """
+    Формирование ответа на случай, если ответ от пользователя не коррелирует ни с одним из вариантов.
+    Произносится нейтральная фраза и повторяется вопрос.
+    """
     sentences = get_db_sentences()
     postsentence = random.choice(sentences["POSTsentence"])
 

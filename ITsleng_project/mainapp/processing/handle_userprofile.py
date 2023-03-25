@@ -64,8 +64,6 @@ def check_and_create_profile(user_id: str, session_id: str) -> None:
         with open(full_file_path, "w", encoding="utf-8") as new_profile:
             new_profile.write(rapidjson.dumps(userprofile_content, indent=4))
 
-        # new_user_logger.info(f'{user_id[-10:]} added')
-
 
 def check_and_add_new_session(user_id: str, session_id: str) -> None:
     """
