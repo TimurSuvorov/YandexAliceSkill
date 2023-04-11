@@ -19,7 +19,7 @@ def hi_replies(user_id: str, session_id: str) -> dict:
     sentences = create_session_file(session_id)
     rating_message = ''
     # Формирование фразы приветствия для нового/старого пользователя
-    if check_old_user(user_id, session_id):
+    if check_old_user(user_id):
         hi_text = sentences["HIsentence_olduser"]["text"]
         hi_tts = sentences["HIsentence_olduser"]["tts"]
         rating_message += random.choice(['🏅 Пару слов про твой рейтинг 🏅\n',
