@@ -1,9 +1,8 @@
 import functools
-import os
 import time
-from inspect import getframeinfo, stack
+import rapidjson
 
-from mainapp.logging.custom_loggers import logger_exception
+from mainapp.processing.handlers.exception_case import exception_replies
 
 
 # Декоратор для логирования времени выполнения функции
@@ -24,13 +23,13 @@ def timeit_logger(logger):
 def exception_logger(logger):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(event):
             try:
-                print('Пошло: ', func.__name__)
-                return func(*args, **kwargs)
+                return func(event)
             except Exception as err:
-                logger.exception(f'exception:{err}|Args:{args!r}', extra={'func_name_override': func.__name__})
-                print('Не прошло и записалось: ', func.__name__)
-                return f'Error: {err}'
+                event_dict = rapidjson.loads(event.body)
+                command: str = event_dict['request']['command']
+                logger.exception(f'exception:{err}|command:{command!r}', extra={'func_name_override': func.__name__})
+                return exception_replies(event_dict, err)
         return wrapper
     return decorator
