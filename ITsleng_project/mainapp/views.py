@@ -1,11 +1,11 @@
 import rapidjson
 import re
 
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from mainapp.logging.custom_decorators import timeit_logger
-from mainapp.logging.custom_loggers import logger_time
+from mainapp.logging.custom_decorators import exception_logger
+from mainapp.logging.custom_loggers import logger_exception
 from mainapp.processing.handle_userprofile import check_and_create_profile, update_time_end, check_and_add_new_session
 from mainapp.processing.handlers.fucking_replies import fucking_replies
 from mainapp.processing.handlers.many_words import many_words
@@ -32,23 +32,24 @@ def echo(request):
     return HttpResponse('Server running')
 
 
-@timeit_logger(logger_time)
+# @timeit_logger(logger_time)
+@exception_logger(logger_exception)
 @csrf_exempt
 def anchorhandler(event):
-    event: dict = rapidjson.load(event)  # Сериализация POST-запроса (от пользователя)
-    command: str = event['request']['command']  # Преобразованная сообщение-команда (от пользователя)
-    original_utterance: str = event['request']['original_utterance']  # Исходное сообщение-команда (от пользователя)
-    user_id = event['session']['user']['user_id']  # Идентификатор пользователя (уникальный для уч.записи)
-    session_id = event['session']['session_id']  # Идентификатор сессии (сброс при выходе или по тайм-ауту 20 мин.)
-    message_id = event['session']['message_id']  # Порядковый номер сообщения за сессию
-    session_state = event['state']['session']  # Блок параметров "состояния"
-    nlu_tokens = event['request']['nlu']['tokens']  # Массив слов из произнесенной фразы. * - в случае нецензурны
-    intents = event['request']['nlu']['intents']  # Извлеченные интенты
+    event_dict: dict = rapidjson.loads(event.body)  # Сериализация POST-запроса (от пользователя)
+    command: str = event_dict['request']['command']  # Преобразованная сообщение-команда (от пользователя)
+    original_utterance: str = event_dict['request']['original_utterance']  # Исходное сообщение-команда (от пользователя)
+    user_id = event_dict['session']['user']['user_id']  # Идентификатор пользователя (уникальный для уч.записи)
+    session_id = event_dict['session']['session_id']  # Идентификатор сессии (сброс при выходе или по тайм-ауту 20 мин.)
+    message_id = event_dict['session']['message_id']  # Порядковый номер сообщения за сессию
+    session_state = event_dict['state']['session']  # Блок параметров "состояния"
+    nlu_tokens = event_dict['request']['nlu']['tokens']  # Массив слов из произнесенной фразы. * - в случае нецензурны
+    intents = event_dict['request']['nlu']['intents']  # Извлеченные интенты
 
     print(f'>>{session_state.get("question_dict", {}).get("sentence", {})}\n<<{original_utterance}')
 
     # Обработка нового входа
-    if event['session']['new']:
+    if event_dict['session']['new']:
         print('1# - новая сессия')
         check_and_create_profile(user_id, session_id)  # Существует ли профайл пользователя; создание, если нет
         check_and_add_new_session(user_id, session_id)  # Существует ли запись сессии в профайле; создание, если нет
@@ -104,8 +105,8 @@ def anchorhandler(event):
         response_dict = checkanswer(command, session_state, user_id, session_id, message_id)
 
     resp_data = {
-        'version': event['version'],
-        'session': event['session'],
+        'version': event_dict['version'],
+        'session': event_dict['session'],
         'response': response_dict["response"],
         'session_state': response_dict["session_state"],
         'analytics': response_dict.get("analytics", {})
@@ -113,4 +114,3 @@ def anchorhandler(event):
 
     update_time_end(user_id, session_id)
     return RapidJSONResponse(resp_data)
-
