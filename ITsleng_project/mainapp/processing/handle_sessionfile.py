@@ -47,7 +47,7 @@ def get_qa_session_sentence(session_id: str) -> dict:
     """
     Функция берет первый вопрос и ставит его в конце. Отдаёт следующий как новый вопрос.
     """
-    full_file_path = os.path.join(SESSIONFOLDER, f'{session_id}.json')
+    full_file_path: PathLike = os.path.join(SESSIONFOLDER, f'{session_id}.json')
     # Читаем содержимое JSON
     with open(full_file_path, 'r', encoding="utf-8") as fp:
         qa_session_sentences: Deque = collections.deque(rapidjson.load(fp))

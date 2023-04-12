@@ -3,22 +3,18 @@ import re
 from .iscorrectAnswer import iscorrectanswer
 from .correctAnswer import correctanswer
 from .stupid_replies import stupid_replies
-from .wrongAnswer import incorrectanswer
+from .wrong_answer_replies import incorrectanswer
 
 stupid_answers = [r"^да+", "да уж", "ништяк", "^нет", "^ой", "блин", "ерунда", "^упс", "сама ответь"]
 
 
-'''
-{'question_dict': {'answers': ['таска'],
-                   'category': [],
-                   'sentence': 'Заведенная или планируемая задача',
-                   'variants': ['окиара', 'таска', 'фича']},
- 'attempt': 0
-}
-'''
-
-
 def checkanswer(command, session_state, user_id, session_id, message_id):
+    """
+    Функция проверяет ответ(команду) пользователя в следующем порядке:
+        - на корреляцию команды в списке верных и неверных вариантов
+            > Если вхождения нет, то ответ считается флудом
+            > Если вхождение есть, то производится проверка правильности ответа
+    """
 
     # Формирование списка вариантов+ответов для проверки вне вариантов
     all_variants = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]

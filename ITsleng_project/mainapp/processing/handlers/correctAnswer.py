@@ -1,16 +1,14 @@
 import random
 
-from .generate_question import tts_prompt_sound
 from ..declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
-from .generate_variants_objects import generate_var_buttons, generate_var_string
+from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from ..handle_sessionfile import get_qa_session_sentence
 from ..handle_userprofile import update_scores
 
 
 def correctanswer(command, session_state, user_id, session_id, message_id):
-    # Берем новый вопрос для сессии
-    question_dict = get_qa_session_sentence(session_id)
+
     # Выбираем случайным образом предложение похвалы и "вариантов"
     sentences = get_db_sentences()
     nicesentence = random.choice(sentences["NICEsentence"])
@@ -19,23 +17,14 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
     letsnext = random.choice(sentences["LETSNEXTsentence"])
 
     # Проверяем на схожесть слова
-    rightanswer = session_state["question_dict"]["answers"][0].replace("+", "")
+    rightanswer = session_state["question_dict"]["answers"][0].replace("+", "").replace(" - ", "")
     if rightanswer != command:  # FIXIT check by regex
-        nicesentence = random.choice(["Пишется по-другому, но я поняла. Верно!",
+        nicesentence = random.choice(["Пишется по-другому, но я поняла.sil <[100]> Верно!",
                                       "Нечетко говоришь, но, похоже, ты прав!",
-                                      "Было непросто понять твои слова, но ты прав!",
-                                      "Я тебя поняла! Верно!"
-                                      ]
-                                     )
-
-    # Выбираем звуки
-    sounds = get_db_sounds()
-    correctsound = random.choice(sounds["CORRECT"])
-
-    # Из вопроса-словаря берем сам вопрос и варианты ответов
-    question_body = question_dict["sentence"]
-    question_variants = question_dict["variants"][:3]
-    variants = generate_var_string(question_variants)
+                                      "Было непросто понять твои слова,sil <[100]> но ты прав!",
+                                      "Я тебя поняла!sil <[100]> Верно!",
+                                      "Не уверена в совпадении на 100 процентов.sil <[100]> Хорош+о,sil <[100]> засчит+аем!"
+                                      ])
 
     # Показывать или нет объяснение при верном ответе
     question_explanation = ""
@@ -53,7 +42,7 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
 
     # Если первый верный ответ, то поздравим с этим
     if 1 <= cur_scores["allscores"] <= 2:
-        nicesentence = f'Поздравляю с первым верным ответом! Отличное начало. У тебя плюс {decl_scores(sessionscore)}.'
+        nicesentence = f'Поздравляю с первым верным ответом!sil <[100]> Отличное начало.sil <[90]> У тебя плюс {decl_scores(sessionscore)}.'
         question_explanation = ''
     # Если баллов больше 5 и сообщение каждое 4-е или 5-е
     elif sessionscore > 4 and message_id % random.choice([3, 4]) == 0:
@@ -66,14 +55,22 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
              ]
         )
 
+    # Выбираем звуки
+    sounds = get_db_sounds()
+    correctsound = random.choice(sounds["CORRECT"])
+    # Берем новый вопрос для сессии
+    question_dict = get_qa_session_sentence(session_id)
+    # Из вопроса-словаря берем сам вопрос и варианты ответов
+    question_body = question_dict["sentence"]
+    question_variants = question_dict["variants"][:3]
+    variants = generate_var_string(question_variants)
 
     response: dict = {
-            'text': f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'.replace(" - ", "").replace("+", ""),
-            'tts': f'{correctsound}sil <[50]>{nicesentence}{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
+            'text': remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
+            'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }
-    print("From correctanswer")
     # Возвращаем сформированный вопрос, а также отдаем в session_state для дальнейшего учёта
     return {
         "response": response,

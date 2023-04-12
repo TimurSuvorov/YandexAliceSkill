@@ -3,7 +3,7 @@ import random
 from mainapp.processing.declension_numbers import decl_scores, decl_places
 from mainapp.processing.handle_common_rating import get_user_common_rating_info
 from mainapp.processing.handle_userprofile import get_scores_rating
-from mainapp.processing.handlers.generate_question import remove_tts_symbols
+from mainapp.processing.handlers.proc_response_obj import remove_tts_symbols
 
 
 def my_rating(session_state: dict, user_id: str, session_id: str) -> dict:

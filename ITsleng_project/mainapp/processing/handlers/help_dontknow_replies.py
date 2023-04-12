@@ -1,8 +1,6 @@
 import random
 
-from .generate_question import tts_prompt_sound
-from .generate_variants_objects import generate_var_buttons, generate_var_string
-from .next_question import next_question
+from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from ..handle_sessionfile import get_qa_session_sentence
 from ..handle_userprofile import update_scores, get_scores_rating
@@ -67,8 +65,8 @@ def dontknow(command, session_state, user_id, session_id):
         cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {allscores}\nВ этой игре: {sessionscore}'
 
         response: dict = {
-            'text': f'{noworrysentence}\nПравильный ответ: {answer}.\n{question_explanation} \n{letnext}.\n✨{question_body}\n{postsentence}:\n{variants}{cur_rating}'.replace(" - ", "").replace("+", ""),
-            'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[50]> Правильный ответ: sil <[50]> {answer}.sil <[50]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
+            'text': remove_tts_symbols(f'{noworrysentence}\nПравильный ответ: {answer}.\n{question_explanation} \n{letnext}.\n✨{question_body}\n{postsentence}:\n{variants}{cur_rating}'),
+            'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[70]> Правильный ответ: sil <[70]> {answer}.sil <[70]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -88,7 +86,7 @@ def dontknow(command, session_state, user_id, session_id):
                 {
                     "name": "Новый вопрос",
                     "value": {
-                        "Вопрос": question_dict["sentence"].replace(" - ", "").replace("+", ""),
+                        "Вопрос": remove_tts_symbols(question_dict["sentence"]),
                     }
                 }
             ]

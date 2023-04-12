@@ -2,16 +2,9 @@ import random
 import re
 
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
-from .generate_question import tts_prompt_sound
-from .generate_variants_objects import generate_var_buttons, generate_var_string
+from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from ..handle_sessionfile import get_qa_session_sentence
 from ..handle_userprofile import update_scores
-
-letsnext = ["Поехали дальше",
-            "Следующий вопрос",
-            "Очередной вопрос",
-            "Двигаемся дальше"
-            ]
 
 
 def incorrectanswer(command, session_state, user_id, session_id):
@@ -46,7 +39,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
         variants = generate_var_string(question_variants)
 
         response: dict = {
-                'text': f'{mistakesentence}\n{postsentence}:\n{variants.replace("+", "")}',
+                'text': remove_tts_symbols(f'{mistakesentence}\n{postsentence}:\n{variants}'),
                 'tts': f'{wrongsound}{mistakesentence}.sil <[50]>{postsentence}:sil <[50]> {variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
@@ -68,7 +61,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
         # Если попыток угадать больше нет. Выбираем случайным образом предложение поругать
         badsentence = random.choice(sentences["BADsentence"])
         postsentence = random.choice(sentences["POSTsentence"])
-        letnext = random.choice(letsnext)
+        letsnext = random.choice(sentences["LETSNEXTsentence"])
         # Получаем первый из списка правильный ответ и объяснение
         answer = session_state["question_dict"]["answers"][0]
         question_explanation = session_state["question_dict"]["explanation"]
@@ -89,12 +82,11 @@ def incorrectanswer(command, session_state, user_id, session_id):
         cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {allscores}\nВ этой игре: {sessionscore}'
 
         response: dict = {
-                'text': f'{badsentence}: {answer.replace("+", "").replace(" - ", "")}.\n{question_explanation.replace(" - ", "").replace("+", "")} \n{letnext}.\n✨{question_body.replace(" - ", "").replace("+", "").replace(" - ", "").replace("+", "")} \n{postsentence}:\n{variants.replace("+", "")}{cur_rating}',
-                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letnext}: sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
+                'text': remove_tts_symbols(f'{badsentence}: {answer}.\n{question_explanation} \n{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
+                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letsnext}: sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
         }
-        print("From wronganswer")
         analytics = {
             "events": [
                 {
@@ -107,7 +99,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
                 {
                     "name": "Новый вопрос",
                     "value": {
-                        "Вопрос": question_body.replace(" - ", "").replace("+", ""),
+                        "Вопрос": remove_tts_symbols(question_body),
                     }
                 }
             ]

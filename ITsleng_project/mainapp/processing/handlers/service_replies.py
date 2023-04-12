@@ -4,6 +4,7 @@ from mainapp.processing.declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from mainapp.processing.handle_sessionfile import create_session_file
 from mainapp.processing.handle_userprofile import check_old_user, get_scores_rating
+from mainapp.processing.handlers.proc_response_obj import remove_tts_symbols
 
 
 def hi_replies(user_id: str, session_id: str) -> dict:
@@ -73,10 +74,12 @@ def hi_replies(user_id: str, session_id: str) -> dict:
     startsound = random.choice(sounds["START"])
 
     response: dict = {
-            'text': f'{hi_text} {rating_message}'.replace(" - ", "").replace("+", ""),
+            'text': remove_tts_symbols(f'{hi_text} {rating_message}'),
             'buttons': [
                 {'title': 'Правила', 'hide': 'true'},
-                {'title': 'Что ты умеешь?', 'hide': 'true'}
+                {'title': 'Что ты умеешь?', 'hide': 'true'},
+                {'title': 'Играть!', 'hide': 'true'},
+                {'title': 'Выйти', 'hide': 'true'}
             ],
             'tts': f'{startsound}{hi_tts} {rating_message}',
             'end_session': 'false'
@@ -110,7 +113,7 @@ def bye_replies(session_state: dict, session_id: str):
     byesound = random.choice(sounds["BYE"])
 
     response: dict = {
-            'text': bye_text,
+            'text': remove_tts_symbols(bye_text),
             'tts': f'{bye_text} {byesound}',
             'end_session': 'True'
     }
@@ -150,9 +153,11 @@ def rules_replies(session_state: dict) -> dict:
         rules_tts += 'Ну чт+о, начин+аем?'
 
     response: dict = {
-            'text': rules_text,
+            'text': remove_tts_symbols(rules_text),
             'buttons': [
-                {'title': 'Что ты умеешь?', 'hide': 'true'}
+                {'title': 'Что ты умеешь?', 'hide': 'true'},
+                {'title': 'Играть!', 'hide': 'true'},
+                {'title': 'Выйти', 'hide': 'true'}
             ],
             'tts': rules_tts,
             'end_session': 'false'
@@ -198,9 +203,11 @@ def about_replies(session_state: dict) -> dict:
         about_text += 'Начин+аем?'
 
     response: dict = {
-            'text': about_text.replace(" - ", "").replace("+", ""),
+            'text': remove_tts_symbols(about_text),
             'buttons': [
-                {'title': 'Правила', 'hide': 'true'}
+                {'title': 'Правила', 'hide': 'true'},
+                {'title': 'Играть!', 'hide': 'true'},
+                {'title': 'Выйти', 'hide': 'true'}
             ],
             'tts': about_text,
             'end_session': 'false'

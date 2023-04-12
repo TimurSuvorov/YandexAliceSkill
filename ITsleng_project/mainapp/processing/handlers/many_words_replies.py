@@ -1,8 +1,8 @@
 import random
 
 from mainapp.processing.db.extract_json import get_db_sentences
-from mainapp.processing.handlers.generate_question import tts_prompt_sound
-from mainapp.processing.handlers.generate_variants_objects import generate_var_string, generate_var_buttons
+from mainapp.processing.handlers.proc_response_obj import generate_var_string, generate_var_buttons, \
+    tts_prompt_sound, remove_tts_symbols
 
 
 def many_words(command: str, session_state: dict) -> dict:
@@ -24,7 +24,7 @@ def many_words(command: str, session_state: dict) -> dict:
     # до этого не было задано вопросов
     if not session_state.get("question_dict"):
         response: dict = {
-            'text': f'{manywords_sentence} {letstart_sentence}'.replace(" - ", "").replace("+", ""),
+            'text': remove_tts_symbols(f'{manywords_sentence} {letstart_sentence}'),
             'tts': f'{manywords_sentence} sil <[70]> {letstart_sentence}',
             'buttons': [
                 {'title': 'Да', 'hide': 'true'},
@@ -53,7 +53,7 @@ def many_words(command: str, session_state: dict) -> dict:
         variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': f'{manywords_sentence} {letscontinue_sentence}\n✨{question_body}\n{postsentence}:\n{variants}'.replace(" - ", "").replace("+", ""),
+            'text': remove_tts_symbols(f'{manywords_sentence} {letscontinue_sentence}\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{manywords_sentence} sil <[70]> {letscontinue_sentence} sil <[100]>{tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

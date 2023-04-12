@@ -8,7 +8,7 @@ from mainapp.logging.custom_decorators import exception_logger
 from mainapp.logging.custom_loggers import logger_exception
 from mainapp.processing.handle_userprofile import check_and_create_profile, update_time_end, check_and_add_new_session
 from mainapp.processing.handlers.fucking_replies import fucking_replies
-from mainapp.processing.handlers.many_words import many_words
+from mainapp.processing.handlers.many_words_replies import many_words
 from mainapp.processing.handlers.my_rating_replies import my_rating
 from mainapp.processing.handlers.question_on_question_replies import question_on_question_replies
 from mainapp.processing.handlers.service_replies import hi_replies, bye_replies, rules_replies, about_replies

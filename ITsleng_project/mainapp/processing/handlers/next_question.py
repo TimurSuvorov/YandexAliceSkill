@@ -1,7 +1,6 @@
 import random
 
-from .generate_question import tts_prompt_sound
-from .generate_variants_objects import generate_var_buttons, generate_var_string
+from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from ..handle_sessionfile import get_qa_session_sentence
 
@@ -23,7 +22,7 @@ def next_question(session_id) -> dict:
     variants = generate_var_string(question_variants)
 
     response: dict = {
-            'text': f'✨{question_body.replace(" - ", "").replace("+", "")}\n{postsentence}:\n{variants.replace("+", "")}',
+            'text': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{nextquestsound}sil <[5]>{tts_prompt_sound(question_body)}sil <[50]>{postsentence}sil <[70]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
@@ -34,7 +33,7 @@ def next_question(session_id) -> dict:
             {
                 "name": "Новый вопрос",
                 "value": {
-                    "Вопрос": question_body.replace(" - ", "").replace("+", ""),
+                    "Вопрос": remove_tts_symbols(question_body),
                 }
             }
         ]

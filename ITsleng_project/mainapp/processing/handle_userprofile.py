@@ -5,7 +5,9 @@ from typing import TypeVar
 import rapidjson
 import os
 import time
-import logging
+
+from mainapp.logging.custom_decorators import exception_logger
+from mainapp.logging.custom_loggers import logger_exception
 
 PathLike = TypeVar("PathLike", str, os.PathLike)
 
@@ -13,16 +15,7 @@ cur_dir: PathLike = os.path.dirname(__file__)
 USERFOLDER: PathLike = os.path.join(cur_dir, 'userfiles')
 
 
-# # Logging for new users
-# new_user_logger = logging.getLogger('new_user_created')
-# new_user_handler = logging.FileHandler(filename='logging/new_users.log')
-# new_user_formatter = logging.Formatter("%(name)s||%(asctime)s||%(levelname)s||%(message)s")
-# new_user_logger.setLevel(logging.INFO)
-# new_user_handler.setFormatter(new_user_formatter)
-# new_user_logger.addHandler(new_user_handler)
-
-
-def check_old_user(user_id: str, session_id: str) -> bool:
+def check_old_user(user_id: str) -> bool:
     """
     Функция открывает профайл пользователя и по количеству ключей проверяет новый пользователь или нет.
     Если ключей больше 4 (исходный сет значений[3] + запись текущей сессии[1])
@@ -115,6 +108,7 @@ def get_scores_rating(user_id: str, session_id: str) -> dict:
             }
 
 
+# @exception_logger(logger_exception)
 def update_scores(user_id: str, session_id: str, score: int) -> dict:
     """
     Функция открывает файл пользователя и обновляет балы общие и за сессию.
