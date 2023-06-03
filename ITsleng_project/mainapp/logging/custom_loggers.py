@@ -29,6 +29,14 @@ handler_f_exception = logging.FileHandler(filename=os.path.join(cur_dir, 'except
 handler_f_exception.setLevel(logging.DEBUG)
 handler_f_exception.setFormatter(formatter_funcinfo)
 
+handler_f_info = logging.FileHandler(filename=os.path.join(cur_dir, 'info.log'), encoding='utf-8')
+handler_f_info.setLevel(logging.INFO)
+handler_f_info.setFormatter(formatter_funcinfo)
+
+handler_f_warning = logging.FileHandler(filename=os.path.join(cur_dir, 'warning.log'), encoding='utf-8')
+handler_f_warning.setLevel(logging.WARNING)
+handler_f_warning.setFormatter(formatter_funcinfo)
+
 handler_console = logging.StreamHandler()
 handler_console.setLevel(logging.INFO)
 
@@ -39,7 +47,19 @@ logger_time.setLevel(logging.DEBUG)
 logger_time.addHandler(handler_f_timeit)
 logger_time.addHandler(handler_console)
 
-# Логгер для регистрации исключений и записи в файл 'timeit.log'
+# Логгер для регистрации исключений и записи в файл 'exceptions.log'
 logger_exception = logging.getLogger('logger_exception')
 logger_exception.setLevel(logging.DEBUG)
 logger_exception.addHandler(handler_f_exception)
+
+# Логгер для регистрации общих событий и записи в файл 'info.log'
+logger_info = logging.getLogger('logger_info')
+logger_info.setLevel(logging.INFO)
+# logger_info.addHandler(handler_console)
+logger_info.addHandler(handler_f_info)
+
+# Логгер для регистрации общих событий и записи в файл 'warning.log'
+logger_warning = logging.getLogger('logger_warning')
+logger_warning.setLevel(logging.WARNING)
+logger_warning.addHandler(handler_console)
+logger_warning.addHandler(handler_f_warning)
