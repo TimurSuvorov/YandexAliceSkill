@@ -2,11 +2,8 @@
   "START": [
     "<speaker audio='alice-music-drum-loop-1.opus'>"
   ],
-  "NEXTQUEST": [
-    "<speaker audio='alice-sounds-game-boot-1.opus'>",
-    "<speaker audio='alice-sounds-game-ping-1.opus'>",
-    "<speaker audio='alice-sounds-game-powerup-1.opus'>",
-    "<speaker audio='alice-music-gong-1.opus'>"
+  "QUESTION": [
+    "<speaker audio=\"dialogs-upload/dd8dd9c2-f16f-438c-ac8c-e178271a2894/7eca0039-7de0-4a83-8a34-a8f92007fb5b.opus\">"
   ],
   "CORRECT": [
     "<speaker audio='alice-sounds-human-crowd-3.opus'>",

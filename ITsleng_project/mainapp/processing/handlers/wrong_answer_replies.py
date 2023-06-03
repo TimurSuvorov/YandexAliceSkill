@@ -62,6 +62,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
         badsentence = random.choice(sentences["BADsentence"])
         postsentence = random.choice(sentences["POSTsentence"])
         letsnext = random.choice(sentences["LETSNEXTsentence"])
+        questionsound = random.choice(sounds["QUESTION"])
         # Получаем первый из списка правильный ответ и объяснение
         answer = session_state["question_dict"]["answers"][0]
         question_explanation = session_state["question_dict"]["explanation"]
@@ -83,7 +84,7 @@ def incorrectanswer(command, session_state, user_id, session_id):
 
         response: dict = {
                 'text': remove_tts_symbols(f'{badsentence}: {answer}.\n{question_explanation} \n{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
-                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letsnext}: sil <[100]> {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
+                'tts': f'{wrongsound}{badsentence}: sil <[50]> {answer}.sil <[70]>{question_explanation} sil <[100]> {letsnext}: sil <[100]> {questionsound}{tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
                 'buttons': generate_var_buttons(question_variants),
                 'end_session': 'False'
         }

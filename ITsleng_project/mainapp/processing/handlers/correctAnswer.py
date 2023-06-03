@@ -9,29 +9,34 @@ from ..handle_userprofile import update_scores
 
 def correctanswer(command, session_state, user_id, session_id, message_id):
 
-    # Выбираем случайным образом предложение похвалы и "вариантов"
+    # Выбираем предложение похвалы и случайным образом "вариантов"
     sentences = get_db_sentences()
-    nicesentence = random.choice(sentences["NICEsentence"])
+    nicesentences = sentences["NICEsentence"]
+    nicesentence = random.choice(nicesentences)
     postsentence = random.choice(sentences["POSTsentence"])
     sayrating = ''
     letsnext = random.choice(sentences["LETSNEXTsentence"])
 
-    # Проверяем на схожесть слова
+    # Проверяем на схожесть слова. Если не один-в-один, то добавляем варианты реакции на это
     rightanswer = session_state["question_dict"]["answers"][0].replace("+", "").replace(" - ", "")
     if rightanswer != command:  # FIXIT check by regex
-        nicesentence = random.choice(["Пишется по-другому, но я поняла.sil <[100]> Верно!",
-                                      "Нечетко говоришь, но, похоже, ты прав!",
-                                      "Было непросто понять твои слова,sil <[100]> но ты прав!",
-                                      "Я тебя поняла!sil <[100]> Верно!",
-                                      "Не уверена в совпадении на 100 процентов.sil <[100]> Хорош+о,sil <[100]> засчит+аем!"
-                                      ])
+        nicesentences += ["Пишется по-другому, но я поняла. Верно!",
+                          "Нечетко говоришь, но, похоже, ты прав!",
+                          "Было непросто понять твои слова,sil <[100]> но ты прав!",
+                          "Я тебя поняла! Верно!",
+                          "Не уверена в совпадении на 100 процентов. Н+о, хорош+о.sil <[100]> Засчит+аем!",
+                          "Поздравляю с верным ответом!sil <[100]> Отл+ично.sil <[90]>",
+                          "Мои н+ейро+уши распознали похожее слово, sil <[100]>хорошо есть н+ейромозг+и. Верно!"
+                          ]
+        # Выбираем из всех реакций похвалы случайно
+        nicesentence = random.choice(nicesentences)
 
     # Показывать или нет объяснение при верном ответе
     question_explanation = ""
     answer = session_state["question_dict"]["answers"][0]
-    if random.choice([True, False, False]):
+    if random.choice([True, False]):
         question_explanation = session_state["question_dict"]["explanation"]
-        question_explanation = f'Ответ: {answer}. -  {question_explanation}'
+        question_explanation = f'Ответ: {answer}.sil <[100]> {question_explanation}'
 
     # Подсчёт рейтинга и его отображение
     score = session_state["attempt"] + 1
@@ -44,20 +49,21 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
     if 1 <= cur_scores["allscores"] <= 2:
         nicesentence = f'Поздравляю с первым верным ответом!sil <[100]> Отличное начало.sil <[90]> У тебя плюс {decl_scores(sessionscore)}.'
         question_explanation = ''
-    # Если баллов больше 5 и сообщение каждое 4-е или 5-е
-    elif sessionscore > 4 and message_id % random.choice([3, 4]) == 0:
+    # Если баллов больше 5 и сообщение каждое 2-е или 3-е
+    elif sessionscore > 4 and message_id % random.choice([3, 2]) == 0:
         cur_rating = ''
         sayrating = random.choice(
-            [f'Движешься уверенно вперёд. Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
-             f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. Очень неплохо!\n',
-             f'Поражаюсь твоей целеустремленности. У тебя за игру {decl_scores(sessionscore)} и всего {decl_scores(allscores)}.\n',
-             f'Я верила в тебя не зря! Ты набрал {decl_scores(sessionscore)} за игру, а всего {decl_scores(allscores)}.\n'
+            [f'Движешься уверенно вперёд. sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
+             f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. sil <[100]>Очень неплохо!\n',
+             f'Поражаюсь твоей целеустремл+ённости. sil <[100]>За игру {decl_scores(sessionscore)} sil <[70]>и всего {decl_scores(allscores)}.sil <[100]> Так держ+ать!\n',
+             f'Я верила в тебя не зря! sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру, sil <[70]>а всего {decl_scores(allscores)}.\n'
              ]
         )
 
     # Выбираем звуки
     sounds = get_db_sounds()
     correctsound = random.choice(sounds["CORRECT"])
+    questionsound = random.choice(sounds["QUESTION"])
     # Берем новый вопрос для сессии
     question_dict = get_qa_session_sentence(session_id)
     # Из вопроса-словаря берем сам вопрос и варианты ответов
@@ -67,7 +73,7 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
 
     response: dict = {
             'text': remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
-            'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
+            'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{questionsound}{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }
