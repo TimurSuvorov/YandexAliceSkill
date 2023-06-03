@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+
 from pathlib import Path
 from dotenv import load_dotenv
+
+from mainapp.logging.custom_loggers import logger_warning
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +24,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 else:
-    print("Не найден файл переменных окружения \".env\"")
+    logger_warning.warning("Не найден файл переменных окружения \".env\"")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -32,7 +35,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'robott88.beget.tech', 'yaskillitsleng.ru']
 
 # Application definition
 
@@ -44,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mainapp',
+    'tellmeapp',
+    'listenitapp',
 ]
 
 if DEBUG:

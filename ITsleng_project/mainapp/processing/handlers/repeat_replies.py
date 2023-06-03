@@ -34,7 +34,7 @@ def repeat_replies(session_state: dict) -> dict:
         question_variants: list = question_dict["variants"][:3]
         variants = generate_var_string(question_variants)
         response: dict = {
-            'text': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n {variants}'),
+            'text': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'Конечно!sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

@@ -5,8 +5,6 @@ from .correctAnswer import correctanswer
 from .stupid_replies import stupid_replies
 from .wrong_answer_replies import incorrectanswer
 
-stupid_answers = [r"^да+", "да уж", "ништяк", "^нет", "^ой", "блин", "ерунда", "^упс", "сама ответь"]
-
 
 def checkanswer(command, session_state, user_id, session_id, message_id):
     """
@@ -17,7 +15,7 @@ def checkanswer(command, session_state, user_id, session_id, message_id):
     """
 
     # Формирование списка вариантов+ответов для проверки вне вариантов
-    all_variants = session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"]
+    all_variants = set(session_state["question_dict"]["answers"] + session_state["question_dict"]["variants"])
     if not re.search("|".join(all_variants).replace("+", ""), command):
         # Берем ранее озвученный вопрос и добавляем фразу
         response_dict = stupid_replies(command, session_state)

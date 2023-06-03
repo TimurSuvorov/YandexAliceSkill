@@ -72,8 +72,8 @@ def remove_sessions_old_files(time_ago: int):
     files: List[str] = os.listdir(SESSIONFOLDER)
     files = [os.path.join(SESSIONFOLDER, file) for file in files]
     for file in files:
-        time_cr: float = os.stat(file).st_ctime
-        if (time_now - time_cr) > time_ago:
+        time_mod: float = os.stat(file).st_mtime
+        if (time_now - time_mod) > time_ago:
             os.remove(file)
 
 
