@@ -18,5 +18,14 @@
   ],
   "BYE": [
     "<speaker audio='alice-sounds-things-door-1.opus'>"
+  ],
+  "LOSSWORD":
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/37cde111-1a8e-4677-8fc5-10f27118fe98.opus'>",
+  "HMMM": [
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/a5fbdab7-4ba7-4f2c-b1e7-b25d0c6cad4c.opus'>",
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/b7f5ec43-53be-40b2-8fcf-f8e9a2832754.opus'>",
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/34ad783f-8a0c-4ac5-8e05-b619ecb11c23.opus'>",
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/5a9d7c6a-6baa-4572-a50d-968ccab84ef8.opus'>",
+    "<speaker audio='dialogs-upload/446850de-29b8-415a-92c0-e2f54af3e47a/0feb2027-1170-409e-ad5e-d532568fe88b.opus'>"
   ]
 }
