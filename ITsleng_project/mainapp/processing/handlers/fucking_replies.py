@@ -54,7 +54,7 @@ def fucking_replies(command: str, session_state: dict) -> dict:
         # attempt = session_state['attempt']
 
         response: dict = {
-            'text': remove_tts_symbols(f'{fucking_sentence} {letscontinue_sentence}\n✨{question_body}\n{postsentence}:\n{variants}'),
+            'text': remove_tts_symbols(f'{fucking_sentence} {letscontinue_sentence}\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{fucking_sentence} sil <[70]> {letscontinue_sentence} sil <[100]>{tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

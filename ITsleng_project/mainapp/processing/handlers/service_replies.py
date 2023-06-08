@@ -143,7 +143,11 @@ def rules_replies(session_state: dict) -> dict:
     сервисного ответа и закрытого вопроса.
     Добавление в ответ флага AppMetrics: "Запрос 'Правила'"
     """
-    sentences = get_db_sentences()
+    # Выбираем звуки
+    sounds: dict = get_db_sounds()
+    lossword: str = sounds["LOSSWORD"]
+
+    sentences: dict = get_db_sentences()
     rules_text = sentences["RULES"]
     # Если функция вызвана во время вопроса, когда присутствует session_state["question_dict"]["answers"]
     if session_state.get('question_dict', {}).get('answers'):
@@ -152,7 +156,7 @@ def rules_replies(session_state: dict) -> dict:
         rules_text += 'Ну чт+о, начин+аем?'
 
     response: dict = {
-            'text': remove_tts_symbols(rules_text),
+            'text': remove_tts_symbols(rules_text).replace(lossword, '🎶'),
             'buttons': [
                 {'title': 'Что ты умеешь?', 'hide': 'true'},
                 {'title': 'Играть!', 'hide': 'true'},
@@ -230,3 +234,12 @@ def about_replies(session_state: dict) -> dict:
         "analytics": analytics,
         "session_state": sessionstate
     }
+
+if __name__ == '__main__':
+    sounds: dict = get_db_sounds()
+    lossword: str = sounds["LOSSWORD"]
+
+    sentences: dict = get_db_sentences()
+    rules_text:str = sentences["RULES"]
+
+    print(rules_text.replace(lossword, '<...>'))

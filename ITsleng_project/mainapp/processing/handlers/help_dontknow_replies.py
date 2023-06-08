@@ -66,7 +66,7 @@ def dontknow(command, session_state, user_id, session_id):
         cur_rating = f'\n\n🏅Ваш рейтинг:\nОбщий: {allscores}\nВ этой игре: {sessionscore}'
 
         response: dict = {
-            'text': remove_tts_symbols(f'{noworrysentence}\nПравильный ответ: {answer}.\n{question_explanation} \n{letnext}.\n✨{question_body}\n{postsentence}:\n{variants}{cur_rating}'),
+            'text': remove_tts_symbols(f'{noworrysentence}\nПравильный ответ: {answer}.\n{question_explanation}\n{letnext}.\n✨{question_body}\n{postsentence}:\n{variants}{cur_rating}'),
             'tts': f'{wrongsound}sil <[5]>{noworrysentence}sil <[70]> Правильный ответ: sil <[70]> {answer}.sil <[70]> {question_explanation} sil <[100]> {letnext}. sil <[100]> {questionsound}{tts_prompt_sound(question_body)}.sil <[50]> {postsentence}:sil <[50]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

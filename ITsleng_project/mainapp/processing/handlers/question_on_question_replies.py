@@ -53,7 +53,7 @@ def question_on_question_replies(command: str, session_state: dict) -> dict:
         variants = generate_var_string(question_variants)
 
         response: dict = {
-            'text': remove_tts_symbols(f'{ques_on_ques_sentence} {letscontinue_sentence}\n✨{question_body}\n{postsentence}:\n{variants}'),
+            'text': remove_tts_symbols(f'{ques_on_ques_sentence} {letscontinue_sentence}\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{ques_on_ques_sentence} sil <[70]> {letscontinue_sentence} sil <[100]>{tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

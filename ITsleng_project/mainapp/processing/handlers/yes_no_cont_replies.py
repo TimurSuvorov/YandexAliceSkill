@@ -56,7 +56,7 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
             attempt = 1
 
         response: dict = {
-            'text': remove_tts_symbols(f'Прекрасно! Мой вопрос.\n✨{question_body}\n{postsentence}:\n{variants}'),
+            'text': remove_tts_symbols(f'Прекрасно! Мой вопрос.\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'Прекрасно! sil <[100]> Мой вопрос. {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
