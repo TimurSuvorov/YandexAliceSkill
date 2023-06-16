@@ -25,7 +25,8 @@ rules = ["правила", "помощь", "помоги", "help"]
 about = ["что ты умеешь", "что умеешь", "умеешь", "знаешь$", "что ты можешь", "еще можешь"]
 dont_know = ["не знаю", r"^дальше$", "сдаюсь", r"ответ$", "новый вопрос", "откуда мне знать", "следующий вопрос",
              "следующий$", r"пропус.*"]
-repeat = ["повтор", "не понял", "ещё раз", "не расслышал", "еще раз", "повтори", "не услышал", "что что", "не понимаю"]
+repeat = ["повтор", "не понял", "ещё раз", "не расслышал", "еще раз", "повтори", "не услышал", "что что", "не понимаю",
+          r"какой .* вопрос"]
 
 
 def echo(request):
@@ -74,14 +75,14 @@ def anchorhandler(event):
     elif re.search("|".join(exit_hard), command):
         print('12# - требование выхода')
         response_dict = bye_replies(session_state, session_id)
-    # Обработка сообщений "вопрос на вопрос". Берем из интентов
-    elif intents.get('question_1', {}):
-        print('7# - вопрос на вопрос')
-        response_dict = question_on_question_replies(command, session_state)
     # Обработка запроса повторения
     elif re.search("|".join(repeat), command) or intents.get('YANDEX.REPEAT', {}):
         print('8# - запрос повторения')
         response_dict = repeat_replies(session_state)
+    # Обработка сообщений "вопрос на вопрос". Берем из интентов
+    elif intents.get('question_1', {}):
+        print('7# - вопрос на вопрос')
+        response_dict = question_on_question_replies(command, session_state)
     # Обработка сообщений из списка dont_know и если сообщений до не было!
     elif re.search("|".join(dont_know), command) and not session_state.get("question_dict"):
         print('9# - не знает без вопроса')

@@ -6,9 +6,6 @@ import rapidjson
 import os
 import time
 
-from mainapp.logging.custom_decorators import exception_logger
-from mainapp.logging.custom_loggers import logger_exception
-
 PathLike = TypeVar("PathLike", str, os.PathLike)
 
 cur_dir: PathLike = os.path.dirname(__file__)
@@ -40,8 +37,8 @@ def check_and_create_profile(user_id: str, session_id: str) -> None:
     """
     full_file_path: PathLike = os.path.join(USERFOLDER, f'{user_id}.json')
     profile_exist: bool = os.path.isfile(full_file_path)
-    time_st = datetime.datetime.utcnow()
     if not profile_exist:
+        time_st = datetime.datetime.utcnow()
         userprofile_content = {
             "user_id": user_id,
             "user_name": None,
@@ -108,7 +105,6 @@ def get_scores_rating(user_id: str, session_id: str) -> dict:
             }
 
 
-# @exception_logger(logger_exception)
 def update_scores(user_id: str, session_id: str, score: int) -> dict:
     """
     Функция открывает файл пользователя и обновляет балы общие и за сессию.

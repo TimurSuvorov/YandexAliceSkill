@@ -3,11 +3,15 @@ import random
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from mainapp.processing.handle_sessionfile import get_qa_session_sentence
 from mainapp.processing.handle_userprofile import update_scores
-from mainapp.processing.handlers.proc_response_obj import generate_var_string, generate_var_buttons, \
-    tts_prompt_sound, remove_tts_symbols
+from mainapp.processing.handlers.proc_response_obj import (
+    generate_var_string,
+    generate_var_buttons,
+    tts_prompt_sound,
+    remove_tts_symbols,
+)
 
 
-def stupid_replies(command, session_state, user_id, session_id):
+def stupid_replies(command: str, session_state: dict, user_id: str, session_id: str):
     """
     Формирование ответа на случай, если ответ от пользователя не коррелирует ни с одним из вариантов.
     Произносится нейтральная фраза и повторяется вопрос.
@@ -24,17 +28,17 @@ def stupid_replies(command, session_state, user_id, session_id):
     question_variants = question_dict["variants"][:3]
     variants = generate_var_string(question_variants)
 
-    if not session_state.get("unrecognized_attempt"):
-        session_state["unrecognized_attempt"] = 0
-    unrecognized_attempt = session_state.get("unrecognized_attempt")
-
+    unrecognized_attempt = session_state.setdefault("unrecognized_attempt", 0)
+    # if not session_state.get("unrecognized_attempt"):
+    #     session_state["unrecognized_attempt"] = 0
+    # unrecognized_attempt = session_state.get("unrecognized_attempt")
     if unrecognized_attempt < 2:
 
         unrecognized_phrases = [
             "Вр+оде, умный, а говоришь не впоп+ад. sil <[100]>Дав+ай ещё раз и поразборчивей. Повторю вопросик.",
             "Неож+иданный ответ. sil <[100]>Попробуй сказать поразб+орчивей. Напомню вопрос и варианты.",
             "Плохо рассл+ышала тебя sil <[70]>или ты оп+ять говоришь со своим кот+ом. sil <[100]>Повтор+им.",
-            "Вот тут я зависла. sil <[100]>Ты точно отвечаешь на этот вопрос?. sil <[100]>Напомню ещё разок.",
+            "Вот тут я зависла. sil <[100]>Ты точно отвечаешь на этот вопрос? sil <[100]>Напомню ещё разок.",
             "Тут даже нет таких вариантов или мне показалось.sil <[100]> Постарайся говорить чётко. sil <[100]>Давай еще раз.",
             "Или я совсем стара sil <[80]>и не расслышала слово, sil <[80]>л+ибо ты о другом. sil <[100]>Повторю тебе вопрос.",
             "Интересный вариант ответа.sil <[100]> Наверное, ты перепутал с другим вопросом. sil <[100]>А мой был следующий.",
@@ -49,7 +53,7 @@ def stupid_replies(command, session_state, user_id, session_id):
         unrecognized_phrase = random.choice(unrecognized_phrases)
         response: dict = {
             'text': remove_tts_symbols(f'{unrecognized_phrase}\n\n✨{question_body}\n{postsentence}:\n{variants}'),
-            'tts': f'{hmmmsound}{unrecognized_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
+            'tts': f'{hmmmsound}sil <[10]>{unrecognized_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -79,6 +83,7 @@ def stupid_replies(command, session_state, user_id, session_id):
             "Я снова не расслышала, хотя уши чищу каждый день. Я прощаю этот вопрос и задам другой..."
         ]
         workaround_phrase = random.choice(workaround_phrases)
+        questionsound = random.choice(sounds["QUESTION"])
         # Берем новый вопрос для сессии и восстанавливаем количество попыток к нему
         question_dict = get_qa_session_sentence(session_id)
         attempt = 1
@@ -97,7 +102,7 @@ def stupid_replies(command, session_state, user_id, session_id):
 
         response: dict = {
             'text': remove_tts_symbols(f'{workaround_phrase}\n\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
-            'tts': f'{hmmmsound}{workaround_phrase} sil <[110]> {question_body} {postsentence}sil <[90]> {variants}',
+            'tts': f'{hmmmsound}sil <[10]>{workaround_phrase} sil <[110]>{questionsound}{tts_prompt_sound(question_body)} {postsentence}sil <[90]> {variants}',
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }

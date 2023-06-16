@@ -1,8 +1,10 @@
 import random
 import re
 
+from mainapp.processing.db.extract_json import get_db_sounds
 
-def generate_var_buttons(question_variants) -> list:
+
+def generate_var_buttons(question_variants: list) -> list:
     """
     Функция формирует список ответов в необходимом формате для suggest-кнопок
     """
@@ -28,8 +30,11 @@ def tts_prompt_sound(question_body: str) -> str:
     """
     Функция заменяет пропущенное слово-загадку на звук для последующей передачи в tts ответа
     """
+    sounds: dict = get_db_sounds()
+    losswordsound: str = sounds["LOSSWORD"]
+
     if "<...>" in question_body:
-        question_body = question_body.replace("<...>", "<speaker audio='alice-sounds-human-cough-1.opus'>")
+        question_body = question_body.replace("<...>", losswordsound)
     return question_body
 
 

@@ -18,6 +18,7 @@ TIME_CHECK_AGO = TIME_REFRESH_AGO + 60  # Срок обновления обще
 def collect_common_rating() -> None:
     """
     Функция предназначена для сбора информации о балах из каждого профайла.
+
     Периодичность запуска функции должна быть не меньше таймера TIME_REFRESH_AGO, который означает отрезок
     времени изменения просматриваемых профайлов пользователя относительно текущего времени.
     Сбор баллов осуществляется в файл ./ratingfiles/common_rating.json в виде словаря c "user_id": "scores".
@@ -83,12 +84,7 @@ def get_user_common_rating_info(user_id: str) -> Tuple[List[int], str]:
         rating_table_print += f'\n{user_place_score[0]}-е место: {user_place_score[1]} 👈👈'
     if user_place_score[0] > 5:
         rating_table_print += f'\n...\n{user_place_score[0]}-е место: {user_place_score[1]} 👈👈'
-    rating_table_print += "\n..."
+    rating_table_print += "\n...\n"
     return user_place_score, rating_table_print
 
 
-if __name__ == '__main__':
-    user_id = 'E298EF0284F05AC96EC7BF263BEF227776FC73B3AFDE6D7EE58057ABDB068CC1'
-    print(get_user_common_rating_info(user_id))
-    print(get_user_common_rating_info(user_id)[0])
-    print(get_user_common_rating_info(user_id)[1])

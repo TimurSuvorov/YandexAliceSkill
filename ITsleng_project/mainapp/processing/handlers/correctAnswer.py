@@ -2,12 +2,17 @@ import random
 
 from ..declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
-from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from ..handle_sessionfile import get_qa_session_sentence
 from ..handle_userprofile import update_scores
+from .proc_response_obj import (
+    generate_var_buttons,
+    generate_var_string,
+    tts_prompt_sound,
+    remove_tts_symbols,
+)
 
 
-def correctanswer(command, session_state, user_id, session_id, message_id):
+def correctanswer(command: str, session_state: dict, user_id: str, session_id: str, message_id: int):
 
     # Выбираем предложение похвалы и случайным образом "вариантов"
     sentences = get_db_sentences()
@@ -53,11 +58,12 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
     elif sessionscore > 4 and message_id % random.choice([3, 2]) == 0:
         cur_rating = ''
         sayrating = random.choice(
-            [f'Движешься уверенно вперёд. sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
-             f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. sil <[100]>Очень неплохо!\n',
-             f'Поражаюсь твоей целеустремл+ённости. sil <[100]>За игру {decl_scores(sessionscore)} sil <[70]>и всего {decl_scores(allscores)}.sil <[100]> Так держ+ать!\n',
-             f'Я верила в тебя не зря! sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру, sil <[70]>а всего {decl_scores(allscores)}.\n'
-             ]
+            [
+                f'Движешься уверенно вперёд. sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
+                f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. sil <[100]>Очень неплохо!\n',
+                f'Поражаюсь твоей целеустремл+ённости. sil <[100]>За игру {decl_scores(sessionscore)} sil <[70]>и всего {decl_scores(allscores)}.sil <[100]> Так держ+ать!\n',
+                f'Я верила в тебя не зря! sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру, sil <[70]>а всего {decl_scores(allscores)}.\n'
+            ]
         )
 
     # Выбираем звуки
@@ -74,6 +80,15 @@ def correctanswer(command, session_state, user_id, session_id, message_id):
     response: dict = {
             'text': remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
             'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{questionsound}{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
+            "card": {
+                "type": "BigImage",
+                "image_id": "213044/fc5ad9085b3cc1f4b098",
+                "title": "Верно!",
+                "description": remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
+                "button": {
+                    "text": "Играть"
+                }
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }
