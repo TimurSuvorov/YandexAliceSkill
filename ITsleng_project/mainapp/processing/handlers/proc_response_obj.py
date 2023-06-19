@@ -33,8 +33,8 @@ def tts_prompt_sound(question_body: str) -> str:
     sounds: dict = get_db_sounds()
     losswordsound: str = sounds["LOSSWORD"]
 
-    if "<...>" in question_body:
-        question_body = question_body.replace("<...>", losswordsound)
+    if "🎶" in question_body:
+        question_body = question_body.replace("🎶", losswordsound)
     return question_body
 
 

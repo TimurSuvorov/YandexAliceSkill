@@ -23,7 +23,7 @@ def my_rating(session_state: dict, user_id: str, session_id: str) -> dict:
     sessionscore = cur_scores["sessionscore"]
     user_place = user_place_score[0]
 
-    rating_head = f'🏅🏅🏅Ваш рейтинг🏅🏅🏅\n\nОбщий счёт: {allscores}. За эту игру: {sessionscore}\n\n' \
+    rating_head = f'\nОбщий счёт: {allscores}. За эту игру: {sessionscore}\n\n' \
                   f'{rating_table_print}'
 
     rating_tts_only, rating_message = get_place_phrase(user_place, allscores)
@@ -49,7 +49,7 @@ def my_rating(session_state: dict, user_id: str, session_id: str) -> dict:
         'card': {
             'type': 'BigImage',
             'image_id': Image.RATING.id,
-            'title': 'Твой рейтинг',
+            'title': '🏅🏅🏅 Твой рейтинг 🏅🏅🏅',
             'description': remove_tts_symbols(f'{rating_head} \n{rating_message}')
         },
         'end_session': 'false'
@@ -127,7 +127,7 @@ def get_place_phrase(user_place: int, user_scores: int):
                 'Весьма недурно! sil <[70]>Прод+олжим покорять вершины?',
                 'Неплохой темп, но всё ещё впереди. Прод+олжим? ',
                 'Уверенный темп! sil <[70]>Поехали дальше?',
-                'Я вижу, sil <[70]> ты очень устремленный человек.sil <[70]>Поехали дальше?',
+                'Я вижу, sil <[70]> ты очень устремленный человек.sil <[70]> Поехали дальше?',
             ]
         )
 
