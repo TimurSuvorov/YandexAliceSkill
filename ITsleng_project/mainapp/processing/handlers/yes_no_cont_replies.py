@@ -2,6 +2,7 @@ import random
 import re
 
 from mainapp.processing.db.extract_json import get_db_sentences
+from mainapp.processing.db.images import Image
 from mainapp.processing.handle_sessionfile import get_qa_session_sentence
 from mainapp.processing.handlers.proc_response_obj import generate_var_string, generate_var_buttons, \
     tts_prompt_sound, remove_tts_symbols
@@ -58,6 +59,12 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         response: dict = {
             'text': remove_tts_symbols(f'Прекрасно! Мой вопрос.\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'Прекрасно! sil <[100]> Мой вопрос. {tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.NEW_QUEST.id,
+                'title': '',
+                'description': remove_tts_symbols(f'Прекрасно! Мой вопрос.\n\n✨{question_body}\n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -135,6 +142,12 @@ def yes_no_cont_replies(command, session_state, session_id, intents):
         response: dict = {
             'text': remove_tts_symbols(f'{norecognize_for_yesno}'),
             'tts': f'{norecognize_for_yesno}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Хммм...',
+                'description': remove_tts_symbols(f'{norecognize_for_yesno}')
+            },
             'buttons': [
                 {'title': 'Да', 'hide': 'true'},
                 {'title': 'Нет', 'hide': 'true'}

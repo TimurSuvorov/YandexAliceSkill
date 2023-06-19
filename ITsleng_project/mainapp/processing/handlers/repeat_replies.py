@@ -2,6 +2,7 @@ import random
 
 from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from mainapp.processing.db.extract_json import get_db_sentences
+from ..db.images import Image
 
 
 def repeat_replies(session_state: dict) -> dict:
@@ -22,6 +23,12 @@ def repeat_replies(session_state: dict) -> dict:
         response: dict = {
             'text': f'Мы ещё не начали, а ты уже просишь повторить. Давай уже начнём? Но если тебе нужна помощь, скажи "Правила" или "Помоги"',
             'tts': f'Мы ещё не начали, а ты уже просишь повторить. Давай уже начнём? Но если тебе нужна помощь, скажи "Правила" или "Помоги"',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.REPEAT.id,
+                'title': 'Хммм...',
+                'description': f'Мы ещё не начали, а ты уже просишь повторить. Давай уже начнём? Но если тебе нужна помощь, скажи "Правила" или "Помоги"'
+            },
             'buttons': [{'title': 'Начнём', 'hide': 'true'},
                         {'title': 'Правила', 'hide': 'true'},
                         {'title': 'Что ты умеешь?', 'hide': 'true'}],
@@ -38,6 +45,12 @@ def repeat_replies(session_state: dict) -> dict:
         response: dict = {
             'text': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'Конечно!sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.REPEAT.id,
+                'title': 'Вот, что я говорила...',
+                'description': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }

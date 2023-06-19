@@ -1,6 +1,7 @@
 import random
 
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
+from mainapp.processing.db.images import Image
 from mainapp.processing.handle_sessionfile import get_qa_session_sentence
 from mainapp.processing.handle_userprofile import update_scores
 from mainapp.processing.handlers.proc_response_obj import (
@@ -54,6 +55,12 @@ def stupid_replies(command: str, session_state: dict, user_id: str, session_id: 
         response: dict = {
             'text': remove_tts_symbols(f'{unrecognized_phrase}\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{hmmmsound}sil <[10]>{unrecognized_phrase}sil <[100]> {tts_prompt_sound(question_body)}sil <[50]> {postsentence}sil <[50]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Хммм...',
+                'description': remove_tts_symbols(f'{unrecognized_phrase}\n\n✨{question_body}\n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }
@@ -103,6 +110,12 @@ def stupid_replies(command: str, session_state: dict, user_id: str, session_id: 
         response: dict = {
             'text': remove_tts_symbols(f'{workaround_phrase}\n\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
             'tts': f'{hmmmsound}sil <[10]>{workaround_phrase} sil <[110]>{questionsound}{tts_prompt_sound(question_body)} {postsentence}sil <[90]> {variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Т-а-а-а-кс...',
+                'description': remove_tts_symbols(f'{workaround_phrase}\n\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }

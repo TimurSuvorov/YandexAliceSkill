@@ -1,6 +1,7 @@
 import random
 
 from mainapp.processing.db.extract_json import get_db_sentences
+from mainapp.processing.db.images import Image
 from mainapp.processing.handlers.proc_response_obj import generate_var_string, generate_var_buttons, \
     tts_prompt_sound, remove_tts_symbols
 
@@ -26,6 +27,12 @@ def question_on_question_replies(command: str, session_state: dict) -> dict:
         response: dict = {
             'text': remove_tts_symbols(f'{ques_on_ques_sentence} {letstart_sentence}'),
             'tts': f'{ques_on_ques_sentence} sil <[70]> {letstart_sentence}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Хммм...',
+                'description': remove_tts_symbols(f'{ques_on_ques_sentence} {letstart_sentence}')
+            },
             'buttons': [
                 {'title': 'Да', 'hide': 'true'},
                 {'title': 'Нет', 'hide': 'true'}
@@ -55,6 +62,12 @@ def question_on_question_replies(command: str, session_state: dict) -> dict:
         response: dict = {
             'text': remove_tts_symbols(f'{ques_on_ques_sentence} {letscontinue_sentence}\n\n✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{ques_on_ques_sentence} sil <[70]> {letscontinue_sentence} sil <[100]>{tts_prompt_sound(question_body)}. {postsentence}: sil <[50]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Так-так...',
+                'description': remove_tts_symbols(f'{ques_on_ques_sentence} {letscontinue_sentence}\n\n✨{question_body}\n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
         }

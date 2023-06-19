@@ -1,11 +1,17 @@
 {
     "user_id": "C94D0664ADAB1D236639C76670BAAA2E7F083D8F3CB6EAC7ED2D28138638591F",
     "user_name": null,
-    "allscores": 3,
+    "allscores": 4,
     "7897d3fd-d388-4a5a-ad8b-c3e53bc806e0": {
         "time_st": "2023-06-16 14:55:42.978205",
         "time_end": "2023-06-16 14:57:58.062900",
         "time_session": 135.084695,
         "scores": 3
+    },
+    "9d278696-52fa-4395-b063-27715d519895": {
+        "time_st": "2023-06-19 13:08:13.122026",
+        "time_end": "2023-06-19 13:09:11.233555",
+        "time_session": 58.111529,
+        "scores": 1
     }
 }

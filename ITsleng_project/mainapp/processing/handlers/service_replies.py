@@ -1,5 +1,6 @@
 import random
 
+from mainapp.processing.db.images import Image
 from mainapp.processing.declension_numbers import decl_scores, decl_places
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from mainapp.processing.handle_common_rating import get_user_common_rating_info
@@ -128,22 +129,22 @@ def hi_replies(user_id: str, session_id: str) -> dict:
 
     response: dict = {
             'text': remove_tts_symbols(f'{hi_text}{rating_text}'),
+            'tts': f'{startsound}{hi_text}{rating_tts}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.HI.id,
+                'title': 'Игра «ITшник в офисе»',
+                'description': remove_tts_symbols(f'{hi_text}{rating_text}'),
+                'button': {
+                    'text': 'Играть'
+                }
+            },
             'buttons': [
                 {'title': 'Правила', 'hide': 'true'},
                 {'title': 'Что ты умеешь?', 'hide': 'true'},
                 {'title': 'Играть!', 'hide': 'true'},
                 {'title': 'Выйти', 'hide': 'true'}
             ],
-            'tts': f'{startsound}{hi_text}{rating_tts}',
-            "card": {
-                "type": "BigImage",
-                "image_id": "997614/c45c09816466152b9aca",
-                "title": "  «ITшник в офисе»",
-                "description": remove_tts_symbols(f'{hi_text}{rating_text}'),
-                "button": {
-                    "text": "Играть"
-                }
-            },
             'end_session': 'false'
     }
     sessionstate = {'service': 11, 'yesno_type': 10}  # флаги сервисного ответа и закрытого вопроса
@@ -177,7 +178,13 @@ def bye_replies(session_state: dict, session_id: str):
     response: dict = {
             'text': remove_tts_symbols(bye_text),
             'tts': f'{bye_text} {byesound}',
-            'end_session': 'True'
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.BYE.id,
+                'title': '',
+                'description': remove_tts_symbols(bye_text)
+            },
+        'end_session': 'True'
     }
 
     return {
@@ -215,13 +222,22 @@ def rules_replies(session_state: dict) -> dict:
         rules_text += 'Ну чт+о, начин+аем?'
 
     response: dict = {
-            'text': remove_tts_symbols(rules_text).replace("<...>", '🎶'),
+            'text': remove_tts_symbols(rules_text).replace('<...>', '🎶'),
             'buttons': [
                 {'title': 'Что ты умеешь?', 'hide': 'true'},
                 {'title': 'Играть!', 'hide': 'true'},
                 {'title': 'Выйти', 'hide': 'true'}
             ],
             'tts': tts_prompt_sound(rules_text),
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.RULES.id,
+                'title': 'Правила игры...',
+                'description': remove_tts_symbols(rules_text).replace('<...>', '🎶'),
+                'button': {
+                    'text': 'Играть'
+                }
+            },
             'end_session': 'false'
     }
 
@@ -267,12 +283,21 @@ def about_replies(session_state: dict) -> dict:
 
     response: dict = {
             'text': remove_tts_symbols(about_text),
+            'tts': about_text,
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.ABOUT.id,
+                'title': 'Немного обо мне...',
+                'description': remove_tts_symbols(about_text),
+                'button': {
+                    'text': 'Играть'
+                }
+            },
             'buttons': [
                 {'title': 'Правила', 'hide': 'true'},
                 {'title': 'Играть!', 'hide': 'true'},
                 {'title': 'Выйти', 'hide': 'true'}
             ],
-            'tts': about_text,
             'end_session': 'false'
     }
 

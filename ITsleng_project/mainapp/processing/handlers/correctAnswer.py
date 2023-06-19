@@ -1,5 +1,8 @@
+import copy
 import random
+from pprint import pprint
 
+from ..db.images import Image
 from ..declension_numbers import decl_scores
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
 from ..handle_sessionfile import get_qa_session_sentence
@@ -16,7 +19,7 @@ def correctanswer(command: str, session_state: dict, user_id: str, session_id: s
 
     # Выбираем предложение похвалы и случайным образом "вариантов"
     sentences = get_db_sentences()
-    nicesentences = sentences["NICEsentence"]
+    nicesentences = copy.deepcopy(sentences["NICEsentence"])
     nicesentence = random.choice(nicesentences)
     postsentence = random.choice(sentences["POSTsentence"])
     sayrating = ''
@@ -25,14 +28,15 @@ def correctanswer(command: str, session_state: dict, user_id: str, session_id: s
     # Проверяем на схожесть слова. Если не один-в-один, то добавляем варианты реакции на это
     rightanswer = session_state["question_dict"]["answers"][0].replace("+", "").replace(" - ", "")
     if rightanswer != command:  # FIXIT check by regex
-        nicesentences += ["Пишется по-другому, но я поняла. Верно!",
-                          "Нечетко говоришь, но, похоже, ты прав!",
-                          "Было непросто понять твои слова,sil <[100]> но ты прав!",
-                          "Я тебя поняла! Верно!",
-                          "Не уверена в совпадении на 100 процентов. Н+о, хорош+о.sil <[100]> Засчит+аем!",
-                          "Поздравляю с верным ответом!sil <[100]> Отл+ично.sil <[90]>",
-                          "Мои н+ейро+уши распознали похожее слово, sil <[100]>хорошо есть н+ейромозг+и. Верно!"
-                          ]
+        nicesentences += [
+            "Пишется по-другому, но я поняла. Верно!",
+            "Нечетко говоришь, но, похоже, ты прав!",
+            "Было непросто понять твои слова,sil <[100]> но ты прав!",
+            "Я тебя поняла! Верно!",
+            "Не уверена в совпадении на 100 процентов. Н+о, хорош+о.sil <[100]> Засчит+аем!",
+            "Поздравляю с верным ответом!sil <[100]> Отл+ично.sil <[90]>",
+            "Мои н+ейро+уши распознали похожее слово, sil <[100]>хорошо есть н+ейромозг+и. Верно!"
+        ]
         # Выбираем из всех реакций похвалы случайно
         nicesentence = random.choice(nicesentences)
 
@@ -41,7 +45,7 @@ def correctanswer(command: str, session_state: dict, user_id: str, session_id: s
     answer = session_state["question_dict"]["answers"][0]
     if random.choice([True, False]):
         question_explanation = session_state["question_dict"]["explanation"]
-        question_explanation = f'Ответ: {answer}.sil <[100]> {question_explanation}'
+        question_explanation = f'Ответ: {answer}.sil <[100]>\n{question_explanation}\n\n'
 
     # Подсчёт рейтинга и его отображение
     score = session_state["attempt"] + 1
@@ -59,10 +63,10 @@ def correctanswer(command: str, session_state: dict, user_id: str, session_id: s
         cur_rating = ''
         sayrating = random.choice(
             [
-                f'Движешься уверенно вперёд. sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n',
-                f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. sil <[100]>Очень неплохо!\n',
-                f'Поражаюсь твоей целеустремл+ённости. sil <[100]>За игру {decl_scores(sessionscore)} sil <[70]>и всего {decl_scores(allscores)}.sil <[100]> Так держ+ать!\n',
-                f'Я верила в тебя не зря! sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру, sil <[70]>а всего {decl_scores(allscores)}.\n'
+                f'Движешься уверенно вперёд. sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} за всё время.\n\n',
+                f'Сейчас у тебя {decl_scores(sessionscore)} за игру и {decl_scores(allscores)} в целом. sil <[100]>Очень неплохо!\n\n',
+                f'Поражаюсь твоей целеустремл+ённости. sil <[100]>За игру {decl_scores(sessionscore)} sil <[70]>и всего {decl_scores(allscores)}.sil <[100]> Так держ+ать!\n\n',
+                f'Я верила в тебя не зря! sil <[100]>Ты набрал {decl_scores(sessionscore)} за игру, sil <[70]>а всего {decl_scores(allscores)}.\n\n'
             ]
         )
 
@@ -80,14 +84,11 @@ def correctanswer(command: str, session_state: dict, user_id: str, session_id: s
     response: dict = {
             'text': remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
             'tts': f'{correctsound}sil <[50]>{nicesentence}sil <[100]>{question_explanation} sil <[100]> {sayrating} sil <[100]>{letsnext}sil <[100]>{questionsound}{tts_prompt_sound(question_body)}sil <[50]>.{postsentence}:sil <[50]>{variants}',
-            "card": {
-                "type": "BigImage",
-                "image_id": "213044/fc5ad9085b3cc1f4b098",
-                "title": "Верно!",
-                "description": remove_tts_symbols(f'👍{nicesentence}\n{question_explanation}\n{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
-                "button": {
-                    "text": "Играть"
-                }
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.CORRECT_ANSWER.id,
+                'title': remove_tts_symbols(random.choice(sentences["NICEsentence"])),
+                'description': remove_tts_symbols(f'{question_explanation}{sayrating}{letsnext}.\n✨{question_body} \n{postsentence}:\n{variants}{cur_rating}'),
             },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'

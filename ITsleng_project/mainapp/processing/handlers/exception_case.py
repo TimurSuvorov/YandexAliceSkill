@@ -2,6 +2,7 @@ import random
 
 
 from mainapp.processing.db.extract_json import get_db_sentences
+from mainapp.processing.db.images import Image
 from mainapp.processing.handle_sessionfile import get_qa_session_sentence
 from mainapp.processing.handlers.proc_response_obj import \
     (generate_var_string,
@@ -29,16 +30,24 @@ def exception_replies(event_dict: dict, error: Exception):
     postsentence: str = random.choice(sentences["POSTsentence"])
 
     exception_sentence: str = \
-        random.choice([
+        random.choice(
+            [
                 'Извини, я отвлеклась и забыла, что спрашивала.sil <[100]> Задам тебе новый вопрос.',
                 'Что-то случилось и я забыла, про что говорила.sil <[100]> Вообщем, давай дальше.',
                 'Ой.sil <[70]> Кажется у меня провал в памяти.sil <[100]> Я задам тебе другой вопрос.',
                 'Ты удивишься, но я забыла ответ.sil <[100]> Предлагаю понять и простить. Следующий вопрос.'
-            ])
+            ]
+        )
 
     response: dict = {
             'text': remove_tts_symbols(f'😳{exception_sentence}\n\n✨{question_body} \n{postsentence}:\n{variants}'),
             'tts': f'{exception_sentence}sil <[100]>{tts_prompt_sound(question_body)}sil <[100]>{postsentence}:sil <[50]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.OFF_SCRIPT.id,
+                'title': 'Ой-ёй-ёй...',
+                'description': remove_tts_symbols(f'😳{exception_sentence}\n\n✨{question_body} \n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }

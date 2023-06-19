@@ -2,6 +2,7 @@ import random
 
 from .proc_response_obj import generate_var_buttons, generate_var_string, tts_prompt_sound, remove_tts_symbols
 from mainapp.processing.db.extract_json import get_db_sentences, get_db_sounds
+from ..db.images import Image
 from ..handle_sessionfile import get_qa_session_sentence
 
 
@@ -24,6 +25,12 @@ def next_question(session_id) -> dict:
     response: dict = {
             'text': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}'),
             'tts': f'{nextquestsound}sil <[5]>{tts_prompt_sound(question_body)}sil <[50]>{postsentence}sil <[70]>{variants}',
+            'card': {
+                'type': 'BigImage',
+                'image_id': Image.NEW_QUEST.id,
+                'title': '',
+                'description': remove_tts_symbols(f'✨{question_body}\n{postsentence}:\n{variants}')
+            },
             'buttons': generate_var_buttons(question_variants),
             'end_session': 'False'
     }
