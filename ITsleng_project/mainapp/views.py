@@ -1,3 +1,7 @@
+from pprint import pprint
+
+from rapidjson import JSONDecodeError
+
 import rapidjson
 import re
 
@@ -40,7 +44,8 @@ def anchorhandler(event):
     event_dict: dict = rapidjson.loads(event.body)  # Сериализация POST-запроса (от пользователя)
     command: str = event_dict['request']['command']  # Преобразованная сообщение-команда (от пользователя)
     original_utterance: str = event_dict['request']['original_utterance']  # Исходное сообщение-команда (от пользователя)
-    user_id = event_dict['session']['user']['user_id']  # Идентификатор пользователя (уникальный для уч.записи)
+
+    user_id = event_dict.get('session').get('user', event_dict.get('session')).get('user_id')  # Идентификатор пользователя (уникальный для уч.записи)
     session_id = event_dict['session']['session_id']  # Идентификатор сессии (сброс при выходе или по тайм-ауту 20 мин.)
     message_id = event_dict['session']['message_id']  # Порядковый номер сообщения за сессию
     session_state = event_dict['state']['session']  # Блок параметров "состояния"
