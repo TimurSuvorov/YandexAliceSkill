@@ -39,6 +39,7 @@ def decl_places(N: int) -> str:
         19: "девятнадцатом"
     }
     round2_decl = {
+        10: 'десятом',
         20: 'двадцатом',
         30: 'тридцатом',
         40: 'сороковом',
@@ -82,14 +83,11 @@ def decl_places(N: int) -> str:
     else:
         round_part = (N // 10) * 10
         rest_part = N % 10
+        if 1 <= N % 100 <= 19:
+            round_part = (N // 100) * 100
+            rest_part = N % 100
         return f"{round_part} {noround_decl.get(rest_part)}"
 
 
 if __name__ == '__main__':
-    print(decl_places(1))
-    print(decl_places(1123))
-    print(decl_places(456))
-    print(decl_places(761))
-    print(decl_places(760))
-    print(decl_places(100))
-    print(decl_places(150))
+    print(decl_places(120))
